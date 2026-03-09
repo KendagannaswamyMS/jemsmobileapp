@@ -124,6 +124,76 @@ $tmrw-col:  #457b9d;
   width: 1px; height: 28px; background: rgba(18,88,117,0.12);
 }
 
+// Today punch
+.today-punch { display: flex; }
+
+.punch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f5f8fa;
+  border-radius: 12px;
+  padding: 10px 12px;
+  flex: 1;
+  gap: 4px;
+}
+
+.punch-item, .running-time {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  justify-content: center;
+
+  ion-icon { font-size: 16px; }
+  .in-icon  { color: $present; }
+  .out-icon { color: #5a7a8a; }
+  ion-icon.still-in { color: $present; animation: pulse 1.5s infinite; }
+}
+
+.running-time ion-icon { color: $primary; }
+
+.punch-detail {
+  display: flex;
+  flex-direction: column;
+}
+
+.punch-label {
+  font-size: 9px;
+  color: #8a9ea6;
+  text-transform: uppercase;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.punch-time {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a2a30;
+  line-height: 1.3;
+  white-space: nowrap;
+  &.in-time { color: $present; }
+}
+
+.punch-sep {
+  font-size: 16px;
+  color: #c8d8e0;
+  flex-shrink: 0;
+}
+
+.no-punch {
+  text-align: center;
+  font-size: 13px;
+  color: #8a9ea6;
+  padding: 8px 0 4px;
+  margin: 0;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
 // Loading skeleton
 .bio-skeleton { margin-bottom: 16px; }
 
@@ -165,9 +235,15 @@ $tmrw-col:  #457b9d;
   font-size: 20px; font-weight: 700; color: #fff;
   &.today-bg    { background: $today-col; }
   &.tomorrow-bg { background: $tmrw-col; }
+  &.joiner-bg   { background: linear-gradient(135deg, #6a0dad, #9c27b0); }
 }
 
 .bday-cake-badge { position: absolute; bottom: -4px; right: -4px; font-size: 16px; line-height: 1; }
+
+.bday-card.bday-tmrw {
+  opacity: 0.45;
+  filter: grayscale(0.5);
+}
 
 .bday-name {
   font-size: 11px; font-weight: 600; color: #3a5060; margin: 6px 0 0;
@@ -176,6 +252,10 @@ $tmrw-col:  #457b9d;
 
 // ── New Joiners ───────────────────────────────────────────────────────────────
 .section-badge.joiner-badge { background: #6a0dad; }
+
+.popup-avatar-fallback.joiner-popup-bg {
+  background: linear-gradient(135deg, #6a0dad, #9c27b0);
+}
 
 .joiner-list {
   display: flex;
@@ -280,8 +360,19 @@ $tmrw-col:  #457b9d;
 }
 .popup-detail-row {
   display: flex; align-items: center; gap: 8px; padding: 4px 0;
-  font-size: 13px; color: #3a5060;
+  font-size: 13px; color: #3a5060; text-decoration: none;
   ion-icon { font-size: 16px; color: $primary; flex-shrink: 0; }
+}
+
+.popup-dial {
+  background: rgba(18,88,117,0.05);
+  border-radius: 10px;
+  padding: 8px 10px;
+  margin-top: 4px;
+  color: $primary;
+  font-weight: 600;
+  &:active { background: rgba(18,88,117,0.12); }
+  .dial-arrow { font-size: 14px; color: #8a9ea6; margin-left: auto; }
 }
 
 .popup-wish-btn {

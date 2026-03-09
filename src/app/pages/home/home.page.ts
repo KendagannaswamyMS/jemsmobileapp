@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { filter, take } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
 import { CurrentUser } from '../../models/user.model';
 import { BirthdayUser } from '../../models/birthday.model';
-import { BiometricRecord, BiometricLog, DayLog } from '../../models/biometric.model';
+import { BiometricRecord, DayLog } from '../../models/biometric.model';
 import { LatestJoiner } from '../../models/joiner.model';
 import { environment } from 'src/environments/environment';
 
@@ -14,16 +14,20 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./home.page.scss'],
   standalone: false
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
   user: CurrentUser | null = null;
 
   // Biometric
   biometric: BiometricRecord | null = null;
   bioLoading = true;
   bioImgError = false;
+  runningTime = '';
+  private timerInterval: any;
 
   // Latest Joiners
   latestJoiners: LatestJoiner[] = [];
+  selectedJoiner: LatestJoiner | null = null;
+  joinerImgError = false;
 
   // Birthdays
   todayBirthdays: BirthdayUser[] = [];
@@ -59,48 +63,61 @@ export class HomePage implements OnInit {
       next: res => {
         this.biometric = res?.[0] || null;
         this.bioLoading = false;
+        this.startTimer();
       },
       error: () => { this.bioLoading = false; }
     });
   }
 
-  // Returns the week label e.g. "Mar 3 – Mar 9"
-  get weekLabel(): string {
-    if (!this.biometric?.logs?.length) return '';
-    const dates = this.biometric.logs.map(l => new Date(l.date));
-    const fmt = (d: Date) => d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
-    return `${fmt(dates[0])} – ${fmt(dates[dates.length - 1])}`;
+  get todayLog(): DayLog | null {
+    if (!this.biometric?.logs?.length) return null;
+    const today = new Date().toDateString();
+    return this.biometric.logs.find(l => new Date(l.date).toDateString() === today) || null;
   }
 
-  // Short day label: Mon, Tue…
-  dayLabel(dateStr: string): string {
-    return new Date(dateStr).toLocaleDateString('en-IN', { weekday: 'short' });
+  get todayDateLabel(): string {
+    return new Date().toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' });
   }
 
-  // Date number: 9
-  dateNum(dateStr: string): number {
-    return new Date(dateStr).getDate();
-  }
-
-  // First "In" punch time, e.g. "10:13"
+  // First "In" punch time, e.g. "10:13 AM"
   firstIn(day: DayLog): string {
     const entry = day.logs.find(l => l.status === 'In');
     if (!entry) return '—';
-    return new Date(entry.logdatetime).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false });
+    return new Date(entry.logdatetime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
   }
 
   // Last "Out" punch time
   lastOut(day: DayLog): string {
     const outs = day.logs.filter(l => l.status === 'Out');
     if (!outs.length) return '—';
-    return new Date(outs[outs.length - 1].logdatetime).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false });
+    return new Date(outs[outs.length - 1].logdatetime).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
   }
 
-  // Day status: 'present' | 'absent' | 'future'
-  dayStatus(day: DayLog): string {
-    if (day.isCurrentOrFuture && !day.logs.length) return 'future';
-    if (day.logs.length) return 'present';
-    return 'absent';
+  isStillIn(day: DayLog): boolean {
+    return day.logs.some(l => l.status === 'In') && !day.logs.some(l => l.status === 'Out');
+  }
+
+  private startTimer() {
+    this.updateRunningTime();
+    this.timerInterval = setInterval(() => this.updateRunningTime(), 1000);
+  }
+
+  private updateRunningTime() {
+    const day = this.todayLog;
+    if (!day?.logs?.length) { this.runningTime = ''; return; }
+    const firstInLog = day.logs.find(l => l.status === 'In');
+    if (!firstInLog) { this.runningTime = ''; return; }
+    const outs = day.logs.filter(l => l.status === 'Out');
+    const end = outs.length ? new Date(outs[outs.length - 1].logdatetime).getTime() : Date.now();
+    const elapsed = end - new Date(firstInLog.logdatetime).getTime();
+    const h = Math.floor(elapsed / 3600000);
+    const m = Math.floor((elapsed % 3600000) / 60000);
+    const s = Math.floor((elapsed % 60000) / 1000);
+    this.runningTime = `${h}h ${m.toString().padStart(2, '0')}m ${s.toString().padStart(2, '0')}s`;
+  }
+
+  ngOnDestroy() {
+    if (this.timerInterval) clearInterval(this.timerInterval);
   }
 
   // ── Latest Joiners ─────────────────────────────────────────────────────────
@@ -156,4 +173,7 @@ export class HomePage implements OnInit {
 
   openPopup(b: BirthdayUser) { this.selectedUser = b; this.selectedImgError = false; }
   closePopup() { this.selectedUser = null; }
+
+  openJoinerPopup(j: LatestJoiner) { this.selectedJoiner = j; this.joinerImgError = false; }
+  closeJoinerPopup() { this.selectedJoiner = null; }
 }

@@ -20,6 +20,14 @@ const routes: Routes = [
         loadChildren: () => import('../pages/attendance/attendance.module').then(m => m.AttendancePageModule)
       },
       {
+        path: 'events',
+        loadChildren: () => import('../pages/events/events.module').then(m => m.EventsPageModule)
+      },
+      {
+        path: 'dept-master',
+        loadChildren: () => import('../pages/dept-master/dept-master.module').then(m => m.DeptMasterPageModule)
+      },
+      {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full'

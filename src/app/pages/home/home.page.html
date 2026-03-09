@@ -30,55 +30,44 @@
 
     <div class="bio-divider"></div>
 
-    <!-- Week label -->
+    <!-- Today label -->
     <div class="bio-week-label">
       <ion-icon name="calendar-outline"></ion-icon>
-      <span>{{ weekLabel }}</span>
+      <span>{{ todayDateLabel }}</span>
     </div>
 
-    <!-- Day tiles -->
-    <div class="bio-days">
-      <div class="bio-day" *ngFor="let day of biometric.logs"
-        [class.present]="dayStatus(day) === 'present'"
-        [class.absent]="dayStatus(day) === 'absent'"
-        [class.future]="dayStatus(day) === 'future'">
-
-        <span class="day-label">{{ dayLabel(day.date) }}</span>
-        <span class="day-num">{{ dateNum(day.date) }}</span>
-
-        <div class="day-dot">
-          <ion-icon *ngIf="dayStatus(day) === 'present'" name="checkmark-circle" class="dot-present"></ion-icon>
-          <ion-icon *ngIf="dayStatus(day) === 'absent'"  name="close-circle"     class="dot-absent"></ion-icon>
-          <ion-icon *ngIf="dayStatus(day) === 'future'"  name="ellipse-outline"  class="dot-future"></ion-icon>
+    <!-- Today punch -->
+    <div class="today-punch" *ngIf="todayLog && todayLog.logs.length; else noPunch">
+      <div class="punch-row">
+        <div class="punch-item">
+          <ion-icon name="log-in-outline" class="in-icon"></ion-icon>
+          <div class="punch-detail">
+            <span class="punch-label">In</span>
+            <span class="punch-time in-time">{{ firstIn(todayLog) }}</span>
+          </div>
         </div>
-
-        <span class="day-time in-time"  *ngIf="dayStatus(day) === 'present'">{{ firstIn(day) }}</span>
-        <span class="day-time out-time" *ngIf="dayStatus(day) === 'present'">{{ lastOut(day) }}</span>
-        <span class="day-time"          *ngIf="dayStatus(day) !== 'present'">—</span>
+        <div class="punch-sep">·</div>
+        <div class="punch-item">
+          <ion-icon name="log-out-outline" class="out-icon"></ion-icon>
+          <div class="punch-detail">
+            <span class="punch-label">Out</span>
+            <span class="punch-time">{{ lastOut(todayLog) }}</span>
+          </div>
+        </div>
+        <div class="punch-sep">·</div>
+        <div class="running-time" *ngIf="runningTime">
+          <ion-icon [name]="isStillIn(todayLog) ? 'timer-outline' : 'time-outline'"
+                    [class.still-in]="isStillIn(todayLog)"></ion-icon>
+          <div class="punch-detail">
+            <span class="punch-label">{{ isStillIn(todayLog) ? 'Running' : 'Total' }}</span>
+            <span class="punch-time">{{ runningTime }}</span>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div class="bio-divider"></div>
-
-    <!-- Stats row -->
-    <div class="bio-stats">
-      <div class="bio-stat">
-        <span class="stat-val">{{ biometric.statistics.daysPresent }}/{{ biometric.statistics.daysInRange }}</span>
-        <span class="stat-lbl">Days</span>
-      </div>
-      <div class="bio-stat-sep"></div>
-      <div class="bio-stat">
-        <span class="stat-val">{{ biometric.statistics.totalWorkHours }}h</span>
-        <span class="stat-lbl">Hours</span>
-      </div>
-      <div class="bio-stat-sep"></div>
-      <div class="bio-stat">
-        <span class="stat-val" [class.low]="biometric.statistics.attendancePercentage < 75">
-          {{ biometric.statistics.attendancePercentage }}%
-        </span>
-        <span class="stat-lbl">Attendance</span>
-      </div>
-    </div>
+    <ng-template #noPunch>
+      <p class="no-punch">No punch recorded today</p>
+    </ng-template>
 
   </div>
 
@@ -88,14 +77,16 @@
     <ion-skeleton-text animated style="width:100%;height:80px;border-radius:12px"></ion-skeleton-text>
   </div>
 
-  <!-- ── Today's Birthdays ───────────────────────── -->
-  <div class="bday-section" *ngIf="todayBirthdays.length > 0">
+  <!-- ── Birthdays ───────────────────────────────── -->
+  <div class="bday-section" *ngIf="todayBirthdays.length > 0 || tomorrowBirthdays.length > 0">
     <div class="section-header">
       <span class="section-icon">🎂</span>
-      <h3 class="section-title">Today's Birthdays</h3>
-      <span class="section-badge today-badge">{{ todayBirthdays.length }}</span>
+      <h3 class="section-title">Birthdays</h3>
+      <span class="section-badge today-badge" *ngIf="todayBirthdays.length > 0">{{ todayBirthdays.length }} today</span>
+      <span class="section-badge tomorrow-badge" *ngIf="tomorrowBirthdays.length > 0">{{ tomorrowBirthdays.length }} tmrw</span>
     </div>
     <div class="bday-scroll">
+      <!-- Today — full colour -->
       <div class="bday-card" *ngFor="let b of todayBirthdays">
         <div class="bday-avatar-wrap" (click)="openPopup(b)">
           <img *ngIf="b.userProfilepic" [src]="b.userProfilepic" class="bday-avatar-img"
@@ -105,18 +96,8 @@
         </div>
         <p class="bday-name">{{ b.userFName }}</p>
       </div>
-    </div>
-  </div>
-
-  <!-- ── Tomorrow's Birthdays ────────────────────── -->
-  <div class="bday-section" *ngIf="tomorrowBirthdays.length > 0">
-    <div class="section-header">
-      <span class="section-icon">🎁</span>
-      <h3 class="section-title">Tomorrow's Birthdays</h3>
-      <span class="section-badge tomorrow-badge">{{ tomorrowBirthdays.length }}</span>
-    </div>
-    <div class="bday-scroll">
-      <div class="bday-card" *ngFor="let b of tomorrowBirthdays">
+      <!-- Tomorrow — grayed -->
+      <div class="bday-card bday-tmrw" *ngFor="let b of tomorrowBirthdays">
         <div class="bday-avatar-wrap" (click)="openPopup(b)">
           <img *ngIf="b.userProfilepic" [src]="b.userProfilepic" class="bday-avatar-img"
             (error)="$any($event.target).style.display='none'" alt="" />
@@ -129,28 +110,22 @@
   </div>
 
   <!-- ── New Joiners ────────────────────────────────── -->
-  <div class="section-header" *ngIf="latestJoiners.length > 0">
-    <span class="section-icon">🆕</span>
-    <h3 class="section-title">New Joiners</h3>
-    <span class="section-badge joiner-badge">{{ latestJoiners.length }}</span>
-  </div>
-
-  <div class="joiner-list" *ngIf="latestJoiners.length > 0">
-    <div class="joiner-card" *ngFor="let j of latestJoiners">
-      <div class="joiner-avatar-wrap">
-        <img *ngIf="j.profilePicPath" [src]="j.profilePicPath" class="joiner-avatar-img"
-          (error)="$any($event.target).style.display='none'" alt="" />
-        <div *ngIf="!j.profilePicPath" class="joiner-avatar-fallback">{{ joinerInitials(j) }}</div>
+  <div class="bday-section" *ngIf="latestJoiners.length > 0">
+    <div class="section-header">
+      <span class="section-icon">🆕</span>
+      <h3 class="section-title">New Joiners</h3>
+      <span class="section-badge joiner-badge">{{ latestJoiners.length }}</span>
+    </div>
+    <div class="bday-scroll">
+      <div class="bday-card" *ngFor="let j of latestJoiners">
+        <div class="bday-avatar-wrap" (click)="openJoinerPopup(j)">
+          <img *ngIf="j.profilePicPath" [src]="j.profilePicPath" class="bday-avatar-img"
+            (error)="$any($event.target).style.display='none'" alt="" />
+          <div *ngIf="!j.profilePicPath" class="bday-avatar-fallback joiner-bg">{{ joinerInitials(j) }}</div>
+          <span class="bday-cake-badge">🆕</span>
+        </div>
+        <p class="bday-name">{{ j.firstName }}</p>
       </div>
-      <div class="joiner-info">
-        <h4 class="joiner-name">{{ joinerName(j) }}</h4>
-        <p class="joiner-desig">{{ j.designation }}</p>
-        <p class="joiner-date">
-          <ion-icon name="calendar-outline"></ion-icon>
-          Joined {{ joiningDate(j.dateOfJoining) }}
-        </p>
-      </div>
-      <span class="joiner-emp-badge"># {{ j.employeeCode }}</span>
     </div>
   </div>
 
@@ -178,14 +153,42 @@
         <ion-icon name="mail-outline"></ion-icon>
         <span>{{ selectedUser.userEmailOfficial }}</span>
       </div>
-      <div class="popup-detail-row" *ngIf="selectedUser.userMobileNumber">
+      <a class="popup-detail-row popup-dial" *ngIf="selectedUser.userMobileNumber"
+        [href]="'tel:' + selectedUser.userMobileNumber" (click)="$event.stopPropagation()">
         <ion-icon name="call-outline"></ion-icon>
         <span>{{ selectedUser.userMobileNumber }}</span>
+        <ion-icon name="chevron-forward-outline" class="dial-arrow"></ion-icon>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ── Joiner Popup ──────────────────────────────── -->
+<div class="popup-overlay" *ngIf="selectedJoiner" (click)="closeJoinerPopup()">
+  <div class="popup-card" (click)="$event.stopPropagation()">
+    <button class="popup-close" (click)="closeJoinerPopup()">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+    <div class="popup-avatar-wrap">
+      <img *ngIf="selectedJoiner.profilePicPath && !joinerImgError"
+        [src]="selectedJoiner.profilePicPath" class="popup-avatar-img"
+        (error)="joinerImgError = true" alt="profile" />
+      <div *ngIf="!selectedJoiner.profilePicPath || joinerImgError" class="popup-avatar-fallback joiner-popup-bg">
+        {{ joinerInitials(selectedJoiner) }}
+      </div>
+      <span class="popup-cake">🆕</span>
+    </div>
+    <h2 class="popup-name">{{ joinerName(selectedJoiner) }}</h2>
+    <p class="popup-gender">{{ selectedJoiner.designation }}</p>
+    <div class="popup-details">
+      <div class="popup-detail-row">
+        <ion-icon name="id-card-outline"></ion-icon>
+        <span>Emp # {{ selectedJoiner.employeeCode }}</span>
+      </div>
+      <div class="popup-detail-row">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <span>Joined {{ joiningDate(selectedJoiner.dateOfJoining) }}</span>
       </div>
     </div>
-    <button class="popup-wish-btn" (click)="closePopup()">
-      <ion-icon name="happy-outline"></ion-icon>
-      Wish Happy Birthday!
-    </button>
   </div>
 </div>
