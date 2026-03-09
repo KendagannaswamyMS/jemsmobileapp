@@ -47,8 +47,9 @@
         </div>
 
         <button type="submit" class="sign-in-btn" [disabled]="form.invalid || isLoading">
-          <span>Sign In</span>
-          <ion-icon name="arrow-forward-outline"></ion-icon>
+          <span *ngIf="isLoading" class="btn-spinner"></span>
+          <span *ngIf="!isLoading">Sign In</span>
+          <ion-icon *ngIf="!isLoading" name="arrow-forward-outline"></ion-icon>
         </button>
 
       </form>

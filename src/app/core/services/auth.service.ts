@@ -24,6 +24,7 @@ export class AuthService {
       UserauthPassword: password
     }).pipe(
       tap(res => {
+        console.log('[AuthService.login] raw response:', JSON.stringify(res));
         if (!res) throw new Error('Empty response from server');
         if (res?.message && !res?.token) throw new Error(res.message);
         

@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
-import { PreloadAllModules, NoPreloading, RouterModule, Routes } from '@angular/router';
-import { environment } from 'src/environments/environment';
+import { NoPreloading, RouterModule, Routes } from '@angular/router';
 
 const routes: Routes = [
   {
@@ -21,10 +20,7 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, {
-      // PreloadAllModules causes "Page Unresponsive" in browser dev mode because it
-      // downloads and parses all lazy bundles (with source maps) simultaneously.
-      // Use it only in production builds where bundles are minified and small.
-      preloadingStrategy: environment.production ? PreloadAllModules : NoPreloading
+      preloadingStrategy: NoPreloading
     })
   ],
   exports: [RouterModule]

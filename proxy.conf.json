@@ -1,8 +1,0 @@
-{
-  "/api": {
-    "target": "https://jems.jssmvpehbcs.org",
-    "secure": true,
-    "changeOrigin": true,
-    "logLevel": "debug"
-  }
-}

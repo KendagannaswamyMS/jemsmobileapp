@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LoadingController, ToastController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
 import { AuthService } from '../../core/services/auth.service';
 import { timeout } from 'rxjs/operators';
 
@@ -23,7 +23,6 @@ export class LoginPage {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private loadingCtrl: LoadingController,
     private toastCtrl: ToastController
   ) {
     this.form = this.fb.group({
@@ -52,7 +51,6 @@ export class LoginPage {
       const appendedValue = value + 'jssstuniv.in';
       this.form.patchValue({ username: appendedValue });
 
-      // Attempt to move cursor to the end
       setTimeout(() => {
         const inputElement = event.target as HTMLInputElement;
         if (inputElement && inputElement.setSelectionRange) {
@@ -62,27 +60,23 @@ export class LoginPage {
     }
   }
 
-  async login() {
+  login() {
     if (this.form.invalid || this.isLoading) return;
     const { username, password } = this.form.value;
 
     this.isLoading = true;
-    const loading = await this.loadingCtrl.create({ message: 'Signing in…' });
-    await loading.present();
 
     const obs$ = this.mode === 'student'
       ? this.authService.studentLogin(username, password)
       : this.authService.login(username, password);
 
     obs$.pipe(timeout(30000)).subscribe({
-      next: async () => {
+      next: () => {
         this.isLoading = false;
-        await loading.dismiss();
-        this.router.navigate(['/tabs'], { replaceUrl: true });
+        this.router.navigateByUrl('/tabs/dashboard', { replaceUrl: true });
       },
       error: async (err) => {
         this.isLoading = false;
-        await loading.dismiss();
         const isTimeout = err?.name === 'TimeoutError';
         const msg = isTimeout
           ? 'Server is not responding. Please check your connection.'
