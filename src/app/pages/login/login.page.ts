@@ -73,7 +73,7 @@ export class LoginPage {
     obs$.pipe(timeout(30000)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.router.navigateByUrl('/tabs/dashboard', { replaceUrl: true });
+        this.router.navigateByUrl('/tabs/home', { replaceUrl: true });
       },
       error: async (err) => {
         this.isLoading = false;

@@ -1,104 +1,55 @@
 <ion-app>
-  <ion-menu contentId="main-content" side="start" type="overlay">
-    <ion-content class="side-menu-content">
 
-      <!-- Profile Section -->
-      <div class="menu-profile">
-        <div class="menu-avatar">
-          <img *ngIf="user?.profilePic" [src]="user!.profilePic" alt="profile" class="menu-avatar-img">
-          <span *ngIf="!user?.profilePic">{{ userInitials }}</span>
+  <ion-menu contentId="main-content" type="overlay">
+
+    <!-- ── Profile Header ──────────────────────────── -->
+    <div class="menu-header">
+      <div class="menu-avatar-wrap">
+        <img
+          *ngIf="user?.profilePic && !imgError"
+          [src]="user!.profilePic"
+          class="menu-avatar-img"
+          (error)="onImgError()"
+          alt="profile" />
+        <div *ngIf="!user?.profilePic || imgError" class="menu-avatar-initials">
+          {{ initials }}
         </div>
-        <h3 class="menu-name">{{ user?.fullName || user?.name || 'User' }}</h3>
-        <p class="menu-role">{{ user?.designation || user?.role || '' }}</p>
-        <p class="menu-dept" *ngIf="user?.departmentName">{{ user!.departmentName }}</p>
-        <p class="menu-email">{{ user?.email || '' }}</p>
       </div>
+      <p class="menu-salutation">{{ user?.salutation }}</p>
+      <h2 class="menu-name">{{ user?.firstName }} {{ user?.middleName }} {{ user?.lastName }}</h2>
+      <p class="menu-role">{{ user?.designation || user?.role || '' }}</p>
+      <p class="menu-dept" *ngIf="user?.departmentName">{{ user!.departmentName }}</p>
+    </div>
 
-      <div class="menu-divider"></div>
+    <!-- ── Nav Items ───────────────────────────────── -->
+    <ion-content class="menu-body">
+      <ion-list lines="none" class="menu-list">
 
-      <!-- Dynamic Accordion Menu (when API returns menus) -->
-      <nav class="menu-nav" *ngIf="hasApiMenus">
-        <ng-container *ngFor="let item of menuItems">
+        <ion-item button (click)="navigate('/tabs/home')" class="menu-item"
+          routerLink="/tabs/home" routerLinkActive="active-item">
+          <ion-icon name="home-outline" slot="start"></ion-icon>
+          <ion-label>Home</ion-label>
+        </ion-item>
 
-          <!-- Parent with children → accordion -->
-          <div *ngIf="item.children && item.children.length > 0" class="menu-accordion">
-            <div class="menu-accordion-header" (click)="toggleAccordion(item)">
-              <span class="menu-item-icon">
-                <ion-icon [name]="item.icon || 'ellipse-outline'"></ion-icon>
-              </span>
-              <span class="menu-accordion-title">{{ item.title }}</span>
-              <ion-icon class="menu-chevron" [name]="isExpanded(item) ? 'chevron-up-outline' : 'chevron-down-outline'">
-              </ion-icon>
-            </div>
-            <div class="menu-accordion-children" [class.open]="isExpanded(item)">
-              <a *ngFor="let child of item.children" class="menu-child-item" [routerLink]="child.route || null"
-                routerLinkActive="active" (click)="navigate(child.route || '')">
-                <span class="menu-child-icon">
-                  <ion-icon [name]="child.icon || 'ellipse-outline'"></ion-icon>
-                </span>
-                <span>{{ child.title }}</span>
-              </a>
-            </div>
-          </div>
+        <ion-item button (click)="navigate('/tabs/timetable')" class="menu-item"
+          routerLink="/tabs/timetable" routerLinkActive="active-item">
+          <ion-icon name="calendar-outline" slot="start"></ion-icon>
+          <ion-label>Timetable</ion-label>
+        </ion-item>
 
-          <!-- Leaf item -->
-          <a *ngIf="!item.children || item.children.length === 0" class="menu-item" [routerLink]="item.route || null"
-            routerLinkActive="active" (click)="navigate(item.route || '')">
-            <span class="menu-item-icon">
-              <ion-icon [name]="item.icon || 'ellipse-outline'"></ion-icon>
-            </span>
-            <span>{{ item.title }}</span>
-          </a>
-
-        </ng-container>
-      </nav>
-
-      <!-- Fallback static menu (no API menus) -->
-      <nav class="menu-nav" *ngIf="!hasApiMenus">
-        <a class="menu-item" routerLink="/tabs/dashboard" routerLinkActive="active" (click)="closeMenu()">
-          <span class="menu-item-icon"><ion-icon name="home-outline"></ion-icon></span>
-          <span>Home</span>
-        </a>
-        <a class="menu-item" routerLink="/tabs/student" routerLinkActive="active" (click)="closeMenu()"
-          *ngIf="isStudent">
-          <span class="menu-item-icon"><ion-icon name="school-outline"></ion-icon></span>
-          <span>Student</span>
-        </a>
-        <a class="menu-item" routerLink="/tabs/faculty" routerLinkActive="active" (click)="closeMenu()"
-          *ngIf="!isStudent">
-          <span class="menu-item-icon"><ion-icon name="briefcase-outline"></ion-icon></span>
-          <span>Faculty</span>
-        </a>
-        <a class="menu-item" routerLink="/tabs/helpdesk" routerLinkActive="active" (click)="closeMenu()">
-          <span class="menu-item-icon"><ion-icon name="help-circle-outline"></ion-icon></span>
-          <span>Help Desk</span>
-        </a>
-        <a class="menu-item" routerLink="/tabs/biometric" routerLinkActive="active" (click)="closeMenu()"
-          *ngIf="!isStudent">
-          <span class="menu-item-icon"><ion-icon name="finger-print-outline"></ion-icon></span>
-          <span>Weekly Biometric</span>
-        </a>
-        <a class="menu-item" routerLink="/tabs/employee-directory" routerLinkActive="active" (click)="closeMenu()"
-          *ngIf="!isStudent">
-          <span class="menu-item-icon"><ion-icon name="people-circle-outline"></ion-icon></span>
-          <span>Employee Directory</span>
-        </a>
-        <a class="menu-item" routerLink="/events" routerLinkActive="active" (click)="closeMenu()">
-          <span class="menu-item-icon"><ion-icon name="calendar-number-outline"></ion-icon></span>
-          <span>Events</span>
-        </a>
-      </nav>
-
+      </ion-list>
     </ion-content>
 
-    <!-- Sign Out -->
+    <!-- ── Sign Out ────────────────────────────────── -->
     <div class="menu-footer">
-      <button class="menu-signout" (click)="logout()">
+      <button class="signout-btn" (click)="logout()">
         <ion-icon name="power-outline"></ion-icon>
-        <span>Sign Out</span>
+        Sign Out
       </button>
     </div>
+
   </ion-menu>
 
   <ion-router-outlet id="main-content"></ion-router-outlet>
+
 </ion-app>

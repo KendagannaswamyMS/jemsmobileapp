@@ -1,0 +1,297 @@
+$primary:   #125875;
+$accent:    #F26622;
+$present:   #2dd36f;
+$absent:    #eb445a;
+$future:    #b0c0c8;
+$today-col: #e63946;
+$tmrw-col:  #457b9d;
+
+// ── Biometric Card ────────────────────────────────────────────────────────────
+.bio-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 20px rgba(18,88,117,0.13);
+  border: 1.5px solid rgba(18,88,117,0.08);
+}
+
+// Profile row
+.bio-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.bio-avatar-wrap {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  border: 2px solid $accent;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.bio-avatar-img { width: 52px; height: 52px; object-fit: cover; display: block; }
+.bio-avatar-fallback {
+  width: 100%; height: 100%;
+  background: $primary;
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 700;
+}
+
+.bio-profile-info {
+  flex: 1;
+  .bio-name { font-size: 14px; font-weight: 700; color: $primary; margin: 0 0 2px; }
+  .bio-emp  { font-size: 11px; color: #8a9ea6; margin: 0; }
+}
+
+.bio-divider {
+  height: 1px;
+  background: rgba(18,88,117,0.08);
+  margin: 10px 0;
+}
+
+// Week label
+.bio-week-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #5a7a8a;
+  font-weight: 600;
+  margin-bottom: 10px;
+  ion-icon { font-size: 14px; color: $accent; }
+}
+
+// Day tiles row
+.bio-days {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.bio-day {
+  flex: 1;
+  min-width: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #f5f8fa;
+  border-radius: 12px;
+  padding: 8px 4px 6px;
+  gap: 3px;
+
+  .day-label { font-size: 10px; font-weight: 600; color: #8a9ea6; text-transform: uppercase; }
+  .day-num   { font-size: 14px; font-weight: 700; color: #1a2a30; }
+
+  .day-dot {
+    display: flex; align-items: center; justify-content: center;
+    .dot-present { font-size: 16px; color: $present; }
+    .dot-absent  { font-size: 16px; color: $absent; }
+    .dot-future  { font-size: 14px; color: $future; }
+  }
+
+  .day-time {
+    font-size: 9px; color: #8a9ea6; text-align: center; line-height: 1.2;
+    &.in-time  { color: $present; font-weight: 700; }
+    &.out-time { color: #5a7a8a; }
+  }
+
+  &.present { background: rgba(45,211,111,0.08); border: 1px solid rgba(45,211,111,0.25); }
+  &.absent  { background: rgba(235,68,90,0.06);  border: 1px solid rgba(235,68,90,0.15); }
+  &.future  { opacity: 0.55; }
+}
+
+// Stats row
+.bio-stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding-top: 4px;
+}
+
+.bio-stat {
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  .stat-val { font-size: 16px; font-weight: 800; color: $primary; }
+  .stat-val.low { color: $absent; }
+  .stat-lbl { font-size: 10px; color: #8a9ea6; text-transform: uppercase; letter-spacing: 0.5px; }
+}
+
+.bio-stat-sep {
+  width: 1px; height: 28px; background: rgba(18,88,117,0.12);
+}
+
+// Loading skeleton
+.bio-skeleton { margin-bottom: 16px; }
+
+// ── Birthday sections ─────────────────────────────────────────────────────────
+.bday-section { margin-bottom: 20px; }
+
+.section-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+  .section-icon  { font-size: 20px; }
+  .section-title { font-size: 15px; font-weight: 700; color: #1a2a30; margin: 0; flex: 1; }
+}
+
+.section-badge {
+  font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; color: #fff;
+  &.today-badge    { background: $today-col; }
+  &.tomorrow-badge { background: $tmrw-col; }
+}
+
+.bday-scroll {
+  display: flex; gap: 12px; overflow-x: auto; padding-bottom: 6px;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.bday-card {
+  display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 72px;
+}
+
+.bday-avatar-wrap {
+  position: relative; width: 60px; height: 60px; border-radius: 50%;
+  cursor: pointer; border: 2.5px solid $accent; overflow: visible;
+  &:active { transform: scale(0.95); }
+}
+
+.bday-avatar-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; display: block; }
+
+.bday-avatar-fallback {
+  width: 60px; height: 60px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 700; color: #fff;
+  &.today-bg    { background: $today-col; }
+  &.tomorrow-bg { background: $tmrw-col; }
+}
+
+.bday-cake-badge { position: absolute; bottom: -4px; right: -4px; font-size: 16px; line-height: 1; }
+
+.bday-name {
+  font-size: 11px; font-weight: 600; color: #3a5060; margin: 6px 0 0;
+  text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%;
+}
+
+// ── New Joiners ───────────────────────────────────────────────────────────────
+.section-badge.joiner-badge { background: #6a0dad; }
+
+.joiner-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.joiner-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 12px rgba(18,88,117,0.09);
+  border: 1.5px solid rgba(18,88,117,0.07);
+}
+
+.joiner-avatar-wrap {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 2px solid $accent;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.joiner-avatar-img { width: 48px; height: 48px; object-fit: cover; display: block; }
+.joiner-avatar-fallback {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, #6a0dad, #9c27b0);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700;
+}
+
+.joiner-info {
+  flex: 1;
+  min-width: 0;
+
+  .joiner-name {
+    font-size: 14px; font-weight: 700; color: $primary;
+    margin: 0 0 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .joiner-desig {
+    font-size: 11px; color: #5a7a8a; margin: 0 0 3px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .joiner-date {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 10px; color: #8a9ea6; margin: 0;
+    ion-icon { font-size: 11px; color: $accent; }
+  }
+}
+
+.joiner-emp-badge {
+  font-size: 10px; font-weight: 700;
+  color: #6a0dad;
+  background: rgba(106,13,173,0.08);
+  padding: 3px 8px; border-radius: 20px;
+  flex-shrink: 0;
+}
+
+// ── Birthday Popup ─────────────────────────────────────────────────────────────
+.popup-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 9999;
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+  animation: fadeIn 0.2s ease;
+}
+
+.popup-card {
+  background: #fff; border-radius: 24px; padding: 28px 20px 24px;
+  width: 100%; max-width: 320px; position: relative; text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  animation: popIn 0.25s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.popup-close {
+  position: absolute; top: 14px; right: 14px; width: 30px; height: 30px;
+  border: none; background: #f0f4f6; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; cursor: pointer;
+  ion-icon { font-size: 18px; color: #5a7a8a; }
+}
+
+.popup-avatar-wrap {
+  position: relative; width: 90px; height: 90px; border-radius: 50%;
+  border: 3px solid $accent; overflow: visible; margin: 0 auto 12px;
+}
+.popup-avatar-img { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; display: block; }
+.popup-avatar-fallback {
+  width: 90px; height: 90px; border-radius: 50%; background: $primary;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px; font-weight: 700; color: #fff;
+}
+.popup-cake { position: absolute; bottom: -6px; right: -6px; font-size: 22px; }
+
+.popup-name   { font-size: 17px; font-weight: 700; color: $primary; margin: 0 0 2px; }
+.popup-gender { font-size: 12px; color: #8a9ea6; margin: 0 0 14px; }
+
+.popup-details {
+  background: #f5f8fa; border-radius: 12px; padding: 10px 14px; margin-bottom: 16px; text-align: left;
+}
+.popup-detail-row {
+  display: flex; align-items: center; gap: 8px; padding: 4px 0;
+  font-size: 13px; color: #3a5060;
+  ion-icon { font-size: 16px; color: $primary; flex-shrink: 0; }
+}
+
+.popup-wish-btn {
+  width: 100%; height: 44px; border: none; border-radius: 12px;
+  background: $primary; color: #fff; font-size: 14px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  cursor: pointer; border-bottom: 3px solid $accent;
+  ion-icon { font-size: 18px; }
+  &:active { opacity: 0.85; }
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes popIn  { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }

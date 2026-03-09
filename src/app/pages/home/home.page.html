@@ -1,0 +1,191 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
+    <ion-title>JEMS</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <!-- ── Biometric Card ──────────────────────────── -->
+  <div class="bio-card" *ngIf="!bioLoading && biometric">
+
+    <!-- Profile row -->
+    <div class="bio-profile">
+      <div class="bio-avatar-wrap">
+        <img *ngIf="biometric.userProfilepic && !bioImgError"
+          [src]="biometric.userProfilepic" class="bio-avatar-img"
+          (error)="bioImgError = true" alt="" />
+        <div *ngIf="!biometric.userProfilepic || bioImgError" class="bio-avatar-fallback">
+          {{ (biometric.userFName[0] || '') + (biometric.userLName[0] || '') | uppercase }}
+        </div>
+      </div>
+      <div class="bio-profile-info">
+        <h3 class="bio-name">
+          {{ biometric.salutationName }} {{ biometric.userFName }} {{ biometric.userMname }} {{ biometric.userLName }}
+        </h3>
+        <p class="bio-emp">Emp # {{ biometric.useremployeecode }}</p>
+      </div>
+    </div>
+
+    <div class="bio-divider"></div>
+
+    <!-- Week label -->
+    <div class="bio-week-label">
+      <ion-icon name="calendar-outline"></ion-icon>
+      <span>{{ weekLabel }}</span>
+    </div>
+
+    <!-- Day tiles -->
+    <div class="bio-days">
+      <div class="bio-day" *ngFor="let day of biometric.logs"
+        [class.present]="dayStatus(day) === 'present'"
+        [class.absent]="dayStatus(day) === 'absent'"
+        [class.future]="dayStatus(day) === 'future'">
+
+        <span class="day-label">{{ dayLabel(day.date) }}</span>
+        <span class="day-num">{{ dateNum(day.date) }}</span>
+
+        <div class="day-dot">
+          <ion-icon *ngIf="dayStatus(day) === 'present'" name="checkmark-circle" class="dot-present"></ion-icon>
+          <ion-icon *ngIf="dayStatus(day) === 'absent'"  name="close-circle"     class="dot-absent"></ion-icon>
+          <ion-icon *ngIf="dayStatus(day) === 'future'"  name="ellipse-outline"  class="dot-future"></ion-icon>
+        </div>
+
+        <span class="day-time in-time"  *ngIf="dayStatus(day) === 'present'">{{ firstIn(day) }}</span>
+        <span class="day-time out-time" *ngIf="dayStatus(day) === 'present'">{{ lastOut(day) }}</span>
+        <span class="day-time"          *ngIf="dayStatus(day) !== 'present'">—</span>
+      </div>
+    </div>
+
+    <div class="bio-divider"></div>
+
+    <!-- Stats row -->
+    <div class="bio-stats">
+      <div class="bio-stat">
+        <span class="stat-val">{{ biometric.statistics.daysPresent }}/{{ biometric.statistics.daysInRange }}</span>
+        <span class="stat-lbl">Days</span>
+      </div>
+      <div class="bio-stat-sep"></div>
+      <div class="bio-stat">
+        <span class="stat-val">{{ biometric.statistics.totalWorkHours }}h</span>
+        <span class="stat-lbl">Hours</span>
+      </div>
+      <div class="bio-stat-sep"></div>
+      <div class="bio-stat">
+        <span class="stat-val" [class.low]="biometric.statistics.attendancePercentage < 75">
+          {{ biometric.statistics.attendancePercentage }}%
+        </span>
+        <span class="stat-lbl">Attendance</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Loading skeleton -->
+  <div class="bio-skeleton" *ngIf="bioLoading">
+    <ion-skeleton-text animated style="width:60%;height:14px;border-radius:6px;margin-bottom:8px"></ion-skeleton-text>
+    <ion-skeleton-text animated style="width:100%;height:80px;border-radius:12px"></ion-skeleton-text>
+  </div>
+
+  <!-- ── Today's Birthdays ───────────────────────── -->
+  <div class="bday-section" *ngIf="todayBirthdays.length > 0">
+    <div class="section-header">
+      <span class="section-icon">🎂</span>
+      <h3 class="section-title">Today's Birthdays</h3>
+      <span class="section-badge today-badge">{{ todayBirthdays.length }}</span>
+    </div>
+    <div class="bday-scroll">
+      <div class="bday-card" *ngFor="let b of todayBirthdays">
+        <div class="bday-avatar-wrap" (click)="openPopup(b)">
+          <img *ngIf="b.userProfilepic" [src]="b.userProfilepic" class="bday-avatar-img"
+            (error)="$any($event.target).style.display='none'" alt="" />
+          <div *ngIf="!b.userProfilepic" class="bday-avatar-fallback today-bg">{{ initials(b) }}</div>
+          <span class="bday-cake-badge">🎂</span>
+        </div>
+        <p class="bday-name">{{ b.userFName }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Tomorrow's Birthdays ────────────────────── -->
+  <div class="bday-section" *ngIf="tomorrowBirthdays.length > 0">
+    <div class="section-header">
+      <span class="section-icon">🎁</span>
+      <h3 class="section-title">Tomorrow's Birthdays</h3>
+      <span class="section-badge tomorrow-badge">{{ tomorrowBirthdays.length }}</span>
+    </div>
+    <div class="bday-scroll">
+      <div class="bday-card" *ngFor="let b of tomorrowBirthdays">
+        <div class="bday-avatar-wrap" (click)="openPopup(b)">
+          <img *ngIf="b.userProfilepic" [src]="b.userProfilepic" class="bday-avatar-img"
+            (error)="$any($event.target).style.display='none'" alt="" />
+          <div *ngIf="!b.userProfilepic" class="bday-avatar-fallback tomorrow-bg">{{ initials(b) }}</div>
+          <span class="bday-cake-badge">🎁</span>
+        </div>
+        <p class="bday-name">{{ b.userFName }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── New Joiners ────────────────────────────────── -->
+  <div class="section-header" *ngIf="latestJoiners.length > 0">
+    <span class="section-icon">🆕</span>
+    <h3 class="section-title">New Joiners</h3>
+    <span class="section-badge joiner-badge">{{ latestJoiners.length }}</span>
+  </div>
+
+  <div class="joiner-list" *ngIf="latestJoiners.length > 0">
+    <div class="joiner-card" *ngFor="let j of latestJoiners">
+      <div class="joiner-avatar-wrap">
+        <img *ngIf="j.profilePicPath" [src]="j.profilePicPath" class="joiner-avatar-img"
+          (error)="$any($event.target).style.display='none'" alt="" />
+        <div *ngIf="!j.profilePicPath" class="joiner-avatar-fallback">{{ joinerInitials(j) }}</div>
+      </div>
+      <div class="joiner-info">
+        <h4 class="joiner-name">{{ joinerName(j) }}</h4>
+        <p class="joiner-desig">{{ j.designation }}</p>
+        <p class="joiner-date">
+          <ion-icon name="calendar-outline"></ion-icon>
+          Joined {{ joiningDate(j.dateOfJoining) }}
+        </p>
+      </div>
+      <span class="joiner-emp-badge"># {{ j.employeeCode }}</span>
+    </div>
+  </div>
+
+</ion-content>
+
+<!-- ── Birthday Popup ──────────────────────────────── -->
+<div class="popup-overlay" *ngIf="selectedUser" (click)="closePopup()">
+  <div class="popup-card" (click)="$event.stopPropagation()">
+    <button class="popup-close" (click)="closePopup()">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+    <div class="popup-avatar-wrap">
+      <img *ngIf="selectedUser.userProfilepic && !selectedImgError"
+        [src]="selectedUser.userProfilepic" class="popup-avatar-img"
+        (error)="selectedImgError = true" alt="profile" />
+      <div *ngIf="!selectedUser.userProfilepic || selectedImgError" class="popup-avatar-fallback">
+        {{ initials(selectedUser) }}
+      </div>
+      <span class="popup-cake">🎂</span>
+    </div>
+    <h2 class="popup-name">{{ fullName(selectedUser) }}</h2>
+    <p class="popup-gender">{{ selectedUser.userGender }}</p>
+    <div class="popup-details">
+      <div class="popup-detail-row" *ngIf="selectedUser.userEmailOfficial">
+        <ion-icon name="mail-outline"></ion-icon>
+        <span>{{ selectedUser.userEmailOfficial }}</span>
+      </div>
+      <div class="popup-detail-row" *ngIf="selectedUser.userMobileNumber">
+        <ion-icon name="call-outline"></ion-icon>
+        <span>{{ selectedUser.userMobileNumber }}</span>
+      </div>
+    </div>
+    <button class="popup-wish-btn" (click)="closePopup()">
+      <ion-icon name="happy-outline"></ion-icon>
+      Wish Happy Birthday!
+    </button>
+  </div>
+</div>

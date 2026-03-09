@@ -1,28 +1,26 @@
 import { NgModule } from '@angular/core';
 import { NoPreloading, RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from './core/guards/auth.guard';
 
 const routes: Routes = [
   {
     path: 'login',
     loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule)
   },
-  // events must come before the '' catch-all (prefix match swallows everything after it)
   {
-    path: 'events',
-    loadChildren: () => import('./pages/events/events.module').then(m => m.EventsPageModule)
+    path: 'tabs',
+    loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule),
+    canActivate: [AuthGuard]
   },
   {
     path: '',
-    loadChildren: () => import('./tabs/tabs.module').then(m => m.TabsPageModule)
+    redirectTo: 'tabs',
+    pathMatch: 'full'
   }
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forRoot(routes, {
-      preloadingStrategy: NoPreloading
-    })
-  ],
+  imports: [RouterModule.forRoot(routes, { preloadingStrategy: NoPreloading })],
   exports: [RouterModule]
 })
 export class AppRoutingModule {}
