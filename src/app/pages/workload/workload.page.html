@@ -1,0 +1,60 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
+    <ion-title>Workload</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="workload-content ion-padding">
+
+  <p class="section-label">Quick Access</p>
+
+  <div class="feature-grid">
+
+    <div class="feature-card" (click)="goTo('/tabs/timetable')">
+      <div class="feature-icon-wrap timetable">
+        <ion-icon name="calendar-outline"></ion-icon>
+      </div>
+      <div>
+        <p class="feature-title">Time Table</p>
+        <p class="feature-sub">View your weekly teaching schedule</p>
+      </div>
+      <ion-icon name="chevron-forward-outline" class="card-arrow"></ion-icon>
+    </div>
+
+    <div class="feature-card" (click)="goTo('/tabs/assigned-courses')">
+      <div class="feature-icon-wrap courses">
+        <ion-icon name="book-outline"></ion-icon>
+      </div>
+      <div>
+        <p class="feature-title">Assigned Courses</p>
+        <p class="feature-sub">Subjects &amp; courses assigned to you</p>
+      </div>
+      <ion-icon name="chevron-forward-outline" class="card-arrow"></ion-icon>
+    </div>
+
+    <div class="feature-card" (click)="goTo('/tabs/my-workload')">
+      <div class="feature-icon-wrap workload">
+        <ion-icon name="bar-chart-outline"></ion-icon>
+      </div>
+      <div>
+        <p class="feature-title">My Workload</p>
+        <p class="feature-sub">Teaching, research &amp; admin hours summary</p>
+      </div>
+      <ion-icon name="chevron-forward-outline" class="card-arrow"></ion-icon>
+    </div>
+
+    <div class="feature-card" (click)="goTo('/tabs/mentoring-sessions')">
+      <div class="feature-icon-wrap mentoring">
+        <ion-icon name="people-circle-outline"></ion-icon>
+      </div>
+      <div>
+        <p class="feature-title">Mentoring Schedules</p>
+        <p class="feature-sub">Student mentoring sessions &amp; action plans</p>
+      </div>
+      <ion-icon name="chevron-forward-outline" class="card-arrow"></ion-icon>
+    </div>
+
+  </div>
+
+</ion-content>

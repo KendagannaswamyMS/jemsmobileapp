@@ -1,0 +1,119 @@
+$primary: #125875;
+
+.ac-content {
+  --background: #f0f4f7;
+}
+
+.ac-list {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Skeleton */
+.ac-skel {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+
+  .skel-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    flex-shrink: 0;
+  }
+
+  .skel-body {
+    flex: 1;
+  }
+}
+
+/* Course card */
+.ac-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 2px 10px rgba(18,88,117,0.07);
+  border: 1.5px solid rgba(18,88,117,0.07);
+}
+
+.ac-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ac-initials {
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.ac-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ac-code {
+  font-size: 11px;
+  font-weight: 700;
+  color: $primary;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ac-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a2a30;
+  margin: 3px 0 6px;
+  line-height: 1.35;
+}
+
+.ac-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.ac-tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(18,88,117,0.1);
+  color: $primary;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  color: #b0c4cc;
+
+  ion-icon {
+    font-size: 52px;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+  }
+}

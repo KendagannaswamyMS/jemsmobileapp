@@ -1,0 +1,314 @@
+$primary: #125875;
+$accent:  #F26622;
+
+.mw-content {
+  --background: #f0f4f7;
+}
+
+.mw-body {
+  padding: 16px;
+}
+
+/* Top row badges */
+.mw-top-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+
+.session-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: $primary;
+  background: rgba(18,88,117,0.1);
+  padding: 4px 10px;
+  border-radius: 8px;
+
+  ion-icon { font-size: 12px; }
+}
+
+.status-badge, .wl-status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.badge-compliant    { background: rgba(16,185,129,0.12); color: #10b981; }
+.badge-noncompliant { background: rgba(239,68,68,0.12);  color: #ef4444; }
+.badge-pending      { background: rgba(245,158,11,0.12); color: #f59e0b; }
+
+.wl-status-badge { background: rgba(18,88,117,0.08); color: $primary; }
+
+/* Total hero card */
+.mw-total-card {
+  background: linear-gradient(135deg, $primary, #1e7fa0);
+  border-radius: 20px;
+  padding: 24px 20px;
+  text-align: center;
+  margin-bottom: 24px;
+  box-shadow: 0 6px 20px rgba(18,88,117,0.3);
+}
+
+.total-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
+  margin: 0 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+.total-value {
+  font-size: 42px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+  line-height: 1;
+}
+
+.total-unit {
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.8);
+}
+
+/* Section label */
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #8a9ea6;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin: 0 0 12px;
+}
+
+/* Hours grid */
+.mw-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.mw-hour-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 2px 8px rgba(18,88,117,0.06);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.hour-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  ion-icon { font-size: 18px; }
+}
+
+.hour-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #8a9ea6;
+  margin: 0;
+}
+
+.hour-value {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1;
+}
+
+.hour-unit {
+  font-size: 10px;
+  font-weight: 600;
+  opacity: 0.6;
+  margin-left: 3px;
+  display: block;
+  margin-top: 2px;
+}
+
+/* Skeleton */
+.mw-total-skel {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px 20px;
+  margin-bottom: 24px;
+}
+
+.mw-hour-skel {
+  background: #fff;
+  border-radius: 16px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+
+/* Weekly timetable breakdown */
+.wk-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.wk-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 8px rgba(18,88,117,0.06);
+}
+
+.wk-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 48px;
+  flex-shrink: 0;
+}
+
+.wk-num {
+  font-size: 12px;
+  font-weight: 800;
+  color: $primary;
+}
+
+.wk-date {
+  font-size: 10px;
+  font-weight: 600;
+  color: #8a9ea6;
+  margin-top: 2px;
+}
+
+.wk-bar-wrap {
+  flex: 1;
+  height: 8px;
+  background: rgba(18,88,117,0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.wk-bar {
+  height: 100%;
+  background: linear-gradient(90deg, $primary, #1e7fa0);
+  border-radius: 4px;
+  min-width: 4px;
+  max-width: 100%;
+}
+
+.wk-hours {
+  font-size: 14px;
+  font-weight: 800;
+  color: $primary;
+  min-width: 44px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Stay Hour Activities */
+.sha-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.sha-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(18,88,117,0.06);
+}
+
+.sha-left { flex: 1; min-width: 0; }
+
+.sha-code {
+  font-size: 11px;
+  font-weight: 700;
+  color: $primary;
+  background: rgba(18,88,117,0.1);
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.sha-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a2a30;
+  margin: 6px 0 3px;
+}
+
+.sha-desc {
+  font-size: 11px;
+  color: #8a9ea6;
+  margin: 0;
+}
+
+.sha-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.sha-hours {
+  font-size: 18px;
+  font-weight: 800;
+  color: $primary;
+  margin: 0 0 3px;
+
+  span {
+    font-size: 11px;
+    font-weight: 600;
+    color: #8a9ea6;
+    margin-left: 2px;
+  }
+}
+
+.sha-week {
+  font-size: 11px;
+  color: #8a9ea6;
+  margin: 0;
+  font-weight: 600;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  color: #b0c4cc;
+
+  ion-icon {
+    font-size: 56px;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+  }
+}

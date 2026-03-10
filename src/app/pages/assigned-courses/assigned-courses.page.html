@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
+    <ion-title>Assigned Courses</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ac-content">
+
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Loading skeletons -->
+  <div *ngIf="loading" class="ac-list">
+    <div class="ac-skel" *ngFor="let s of [1,2,3,4]">
+      <ion-skeleton-text animated class="skel-icon"></ion-skeleton-text>
+      <div class="skel-body">
+        <ion-skeleton-text animated style="width:30%;height:10px;border-radius:4px"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width:75%;height:13px;border-radius:4px;margin-top:6px"></ion-skeleton-text>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty state -->
+  <div class="empty-state" *ngIf="!loading && courses.length === 0">
+    <ion-icon name="book-outline"></ion-icon>
+    <p>No courses assigned</p>
+  </div>
+
+  <!-- Course cards -->
+  <div class="ac-list" *ngIf="!loading && courses.length > 0">
+    <div class="ac-card" *ngFor="let c of courses; let i = index">
+      <div class="ac-icon-wrap" [style.background]="activityColor(i)">
+        <span class="ac-initials">{{ initials(c.courseName) }}</span>
+      </div>
+      <div class="ac-info">
+        <span class="ac-code">{{ c.courseCode }}</span>
+        <p class="ac-name">{{ c.courseName }}</p>
+        <div class="ac-tags">
+          <span class="ac-tag">Sem {{ c.semesterId }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</ion-content>

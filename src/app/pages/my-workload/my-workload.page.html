@@ -1,0 +1,115 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
+    <ion-title>My Workload</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="mw-content">
+
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="mw-body">
+    <div class="mw-total-skel">
+      <ion-skeleton-text animated style="width:40%;height:14px;border-radius:6px;margin:0 auto 10px"></ion-skeleton-text>
+      <ion-skeleton-text animated style="width:60%;height:32px;border-radius:8px;margin:0 auto"></ion-skeleton-text>
+    </div>
+    <div class="mw-grid">
+      <div class="mw-hour-skel" *ngFor="let s of [1,2,3,4,5,6]">
+        <ion-skeleton-text animated style="width:36px;height:36px;border-radius:10px"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width:70%;height:10px;border-radius:4px;margin-top:8px"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width:50%;height:16px;border-radius:4px;margin-top:6px"></ion-skeleton-text>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div class="empty-state" *ngIf="!loading && error">
+    <ion-icon name="alert-circle-outline"></ion-icon>
+    <p>Failed to load workload data</p>
+  </div>
+
+  <!-- No workload -->
+  <div class="empty-state" *ngIf="!loading && !error && !workload">
+    <ion-icon name="bar-chart-outline"></ion-icon>
+    <p>No workload data found</p>
+  </div>
+
+  <!-- Workload data -->
+  <div class="mw-body" *ngIf="!loading && !error && workload">
+
+    <!-- Session + Status badges -->
+    <div class="mw-top-row">
+      <span class="session-badge" *ngIf="workload.sessionName">
+        <ion-icon name="calendar-outline"></ion-icon> {{ workload.sessionName }}
+      </span>
+      <span class="status-badge" [ngClass]="complianceClass(workload.compliancestatus)">
+        {{ complianceLabel(workload.compliancestatus) }}
+      </span>
+      <span class="wl-status-badge">{{ workloadStatusLabel(workload.workloadstatus) }}</span>
+    </div>
+
+    <!-- Total hours hero -->
+    <div class="mw-total-card">
+      <p class="total-label">Total Workload Hours</p>
+      <p class="total-value">
+        {{ toHHMM(totalHours) }}
+        <span class="total-unit">H:MM</span>
+      </p>
+    </div>
+
+    <!-- Hours breakdown grid -->
+    <p class="section-label">Hours Breakdown</p>
+    <div class="mw-grid">
+      <div class="mw-hour-card" *ngFor="let h of hourEntries">
+        <div class="hour-icon-wrap" [style.background]="h.color + '1a'">
+          <ion-icon [name]="h.icon" [style.color]="h.color"></ion-icon>
+        </div>
+        <p class="hour-label">{{ h.label }}</p>
+        <p class="hour-value" [style.color]="h.color">
+          {{ toHHMM(h.value) }}<span class="hour-unit">H:MM</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Weekly timetable breakdown -->
+    <div *ngIf="weeklyBreakdown.length > 0">
+      <p class="section-label">Teaching Hours by Week</p>
+      <div class="wk-list">
+        <div class="wk-row" *ngFor="let w of weeklyBreakdown">
+          <div class="wk-badge">
+            <span class="wk-num">Wk {{ w.week }}</span>
+            <span class="wk-date" *ngIf="w.weekStart">{{ formatWeekDate(w.weekStart) }}</span>
+          </div>
+          <div class="wk-bar-wrap">
+            <div class="wk-bar" [style.width.%]="(w.hours / 20) * 100 | number:'1.0-0'"></div>
+          </div>
+          <span class="wk-hours">{{ toHHMM(w.hours) }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stay Hour Activities -->
+    <div *ngIf="workload.stayHourActivities?.length">
+      <p class="section-label">Stay Hour Activities</p>
+      <div class="sha-list">
+        <div class="sha-card" *ngFor="let a of workload.stayHourActivities">
+          <div class="sha-left">
+            <span class="sha-code">{{ a.activitycode }}</span>
+            <p class="sha-name">{{ a.activityname }}</p>
+            <p class="sha-desc" *ngIf="a.description">{{ a.description }}</p>
+          </div>
+          <div class="sha-right">
+            <p class="sha-hours">{{ toHHMM(a.hoursperweek) }}<span>/wk</span></p>
+            <p class="sha-week">Wk {{ a.weeknumber }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</ion-content>

@@ -44,6 +44,22 @@ const routes: Routes = [
         loadChildren: () => import('../pages/my-tickets/my-tickets.module').then(m => m.MyTicketsPageModule)
       },
       {
+        path: 'workload',
+        loadChildren: () => import('../pages/workload/workload.module').then(m => m.WorkloadPageModule)
+      },
+      {
+        path: 'assigned-courses',
+        loadChildren: () => import('../pages/assigned-courses/assigned-courses.module').then(m => m.AssignedCoursesPageModule)
+      },
+      {
+        path: 'my-workload',
+        loadChildren: () => import('../pages/my-workload/my-workload.module').then(m => m.MyWorkloadPageModule)
+      },
+      {
+        path: 'mentoring-sessions',
+        loadChildren: () => import('../pages/mentoring-sessions/mentoring-sessions.module').then(m => m.MentoringSessionsPageModule)
+      },
+      {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full'

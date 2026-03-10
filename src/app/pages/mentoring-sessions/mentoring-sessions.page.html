@@ -1,0 +1,189 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
+    <ion-title>Mentoring Sessions</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ms-content">
+
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- Filter chips -->
+  <div class="filter-bar" *ngIf="!loading && !error">
+    <button class="chip" *ngFor="let f of filters"
+      [class.chip-active]="activeFilter === f"
+      (click)="activeFilter = f">
+      {{ f }}
+      <span class="chip-count" *ngIf="countFor(f) > 0">{{ countFor(f) }}</span>
+    </button>
+  </div>
+
+  <!-- Loading skeletons -->
+  <div class="ms-list" *ngIf="loading">
+    <div class="ms-skel" *ngFor="let s of [1,2,3]">
+      <ion-skeleton-text animated class="skel-avatar"></ion-skeleton-text>
+      <div class="skel-body">
+        <ion-skeleton-text animated style="width:55%;height:12px;border-radius:4px"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width:80%;height:10px;border-radius:4px;margin-top:7px"></ion-skeleton-text>
+        <ion-skeleton-text animated style="width:40%;height:10px;border-radius:4px;margin-top:5px"></ion-skeleton-text>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div class="empty-state" *ngIf="!loading && error">
+    <ion-icon name="alert-circle-outline"></ion-icon>
+    <p>Failed to load mentoring sessions</p>
+  </div>
+
+  <!-- Empty -->
+  <div class="empty-state" *ngIf="!loading && !error && filtered.length === 0">
+    <ion-icon name="people-circle-outline"></ion-icon>
+    <p>No sessions found</p>
+  </div>
+
+  <!-- Session cards -->
+  <div class="ms-list" *ngIf="!loading && !error && filtered.length > 0">
+    <div class="ms-card" *ngFor="let s of filtered" (click)="openDetail(s)"
+      [class.card-upcoming]="isUpcoming(s.meetingDate)">
+
+      <!-- Avatar: profile pic or initials -->
+      <div class="ms-avatar-wrap">
+        <img *ngIf="s.studentProfilePic" [src]="s.studentProfilePic" class="ms-avatar-img"
+          (error)="$any($event.target).style.display='none'; $any($event.target).nextElementSibling.style.display='flex'" alt="" />
+        <div class="ms-avatar" [style.display]="s.studentProfilePic ? 'none' : 'flex'">
+          {{ initials(s.studentName) }}
+        </div>
+      </div>
+
+      <!-- Main content -->
+      <div class="ms-info">
+        <div class="ms-header-row">
+          <p class="ms-student">{{ s.studentName }}</p>
+          <span class="status-badge" [ngClass]="statusClass(s.sessionStatus)">{{ s.sessionStatus }}</span>
+        </div>
+        <p class="ms-topic" *ngIf="s.meetingTopic">
+          <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+          {{ s.meetingTopic }}
+        </p>
+        <div class="ms-meta">
+          <span class="ms-date">
+            <ion-icon name="calendar-outline"></ion-icon>
+            {{ formatDate(s.meetingDate) }}
+          </span>
+          <span class="ms-time">
+            <ion-icon name="time-outline"></ion-icon>
+            {{ formatTime(s.meetingDate) }}
+          </span>
+          <span class="mode-badge" [ngClass]="modeClass(s.meetingMode)">{{ s.meetingMode }}</span>
+          <span class="upcoming-badge" *ngIf="isUpcoming(s.meetingDate)">
+            <ion-icon name="flash-outline"></ion-icon> Upcoming
+          </span>
+        </div>
+      </div>
+
+      <ion-icon name="chevron-forward-outline" class="card-arrow"></ion-icon>
+    </div>
+  </div>
+
+</ion-content>
+
+<!-- ── Detail Sheet ──────────────────────────────── -->
+<div class="detail-overlay" *ngIf="selected" (click)="closeDetail()">
+  <div class="detail-sheet" (click)="$event.stopPropagation()">
+
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" (click)="closeDetail()">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+
+    <div class="sheet-body">
+
+      <!-- Student profile header -->
+      <div class="ds-student-row">
+        <div class="ds-avatar-wrap">
+          <img *ngIf="selected.studentProfilePic" [src]="selected.studentProfilePic" class="ds-avatar-img"
+            (error)="$any($event.target).style.display='none'; $any($event.target).nextElementSibling.style.display='flex'" alt="" />
+          <div class="ds-avatar" [style.display]="selected.studentProfilePic ? 'none' : 'flex'">
+            {{ initials(selected.studentName) }}
+          </div>
+        </div>
+        <div class="ds-student-meta">
+          <p class="ds-student-name">{{ selected.studentName }}</p>
+          <div class="ds-badges">
+            <span class="status-badge" [ngClass]="statusClass(selected.sessionStatus)">{{ selected.sessionStatus }}</span>
+            <span class="mode-badge" [ngClass]="modeClass(selected.meetingMode)">{{ selected.meetingMode }}</span>
+            <span class="upcoming-badge upcoming-badge-lg" *ngIf="isUpcoming(selected.meetingDate)">
+              <ion-icon name="flash-outline"></ion-icon> Upcoming
+            </span>
+          </div>
+          <!-- Contact -->
+          <div class="ds-contact-row" *ngIf="selected.studentPhone || selected.studentEmail">
+            <a *ngIf="selected.studentPhone" class="ds-contact-link" [href]="'tel:' + selected.studentPhone" (click)="$event.stopPropagation()">
+              <ion-icon name="call-outline"></ion-icon> {{ selected.studentPhone }}
+            </a>
+            <a *ngIf="selected.studentEmail" class="ds-contact-link" [href]="'mailto:' + selected.studentEmail" (click)="$event.stopPropagation()">
+              <ion-icon name="mail-outline"></ion-icon> {{ selected.studentEmail }}
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Academic context chips -->
+      <div class="ds-context-row">
+        <span class="ds-ctx-chip" *ngIf="selected.programName">
+          <ion-icon name="school-outline"></ion-icon> {{ selected.programName }}
+        </span>
+        <span class="ds-ctx-chip" *ngIf="selected.collegeName">
+          <ion-icon name="business-outline"></ion-icon> {{ selected.collegeName }}
+        </span>
+        <span class="ds-ctx-chip" *ngIf="selected.sessionName">
+          <ion-icon name="calendar-outline"></ion-icon> {{ selected.sessionName }}
+        </span>
+        <span class="ds-ctx-chip" *ngIf="selected.semesterName">
+          <ion-icon name="layers-outline"></ion-icon> {{ selected.semesterName }}
+        </span>
+      </div>
+
+      <!-- Meeting info grid -->
+      <div class="ds-grid">
+        <div class="ds-cell">
+          <span class="ds-label">Meeting Date</span>
+          <span class="ds-val">{{ formatDate(selected.meetingDate) }}</span>
+        </div>
+        <div class="ds-cell">
+          <span class="ds-label">Time</span>
+          <span class="ds-val">{{ formatTime(selected.meetingDate) }}</span>
+        </div>
+        <div class="ds-cell" *ngIf="selected.nextMeetingDate">
+          <span class="ds-label">Next Meeting</span>
+          <span class="ds-val">{{ formatDate(selected.nextMeetingDate) }}</span>
+        </div>
+        <div class="ds-cell">
+          <span class="ds-label">Semester</span>
+          <span class="ds-val">{{ selected.semesterName || ('Sem ' + selected.semesterId) }}</span>
+        </div>
+      </div>
+
+      <!-- Topic -->
+      <div class="ds-section" *ngIf="selected.meetingTopic">
+        <p class="ds-section-label">
+          <ion-icon name="chatbubble-ellipses-outline"></ion-icon> Meeting Topic
+        </p>
+        <p class="ds-text">{{ selected.meetingTopic }}</p>
+      </div>
+
+      <!-- Action Plan -->
+      <div class="ds-section" *ngIf="selected.actionPlan">
+        <p class="ds-section-label">
+          <ion-icon name="checkmark-circle-outline"></ion-icon> Action Plan
+        </p>
+        <p class="ds-text">{{ selected.actionPlan }}</p>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -61,6 +61,12 @@
           <ion-label>My Tickets</ion-label>
         </ion-item>
 
+        <ion-item button (click)="navigate('/tabs/workload')" class="menu-item"
+          routerLink="/tabs/workload" routerLinkActive="active-item">
+          <ion-icon name="bar-chart-outline" slot="start"></ion-icon>
+          <ion-label>Workload</ion-label>
+        </ion-item>
+
       </ion-list>
     </ion-content>
 
