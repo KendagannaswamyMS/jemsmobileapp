@@ -36,6 +36,14 @@ const routes: Routes = [
         loadChildren: () => import('../pages/monthly-biometric/monthly-biometric.module').then(m => m.MonthlyBiometricPageModule)
       },
       {
+        path: 'helpdesk',
+        loadChildren: () => import('../pages/helpdesk/helpdesk.module').then(m => m.HelpdeskPageModule)
+      },
+      {
+        path: 'my-tickets',
+        loadChildren: () => import('../pages/my-tickets/my-tickets.module').then(m => m.MyTicketsPageModule)
+      },
+      {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full'

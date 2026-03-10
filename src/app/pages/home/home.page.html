@@ -1,11 +1,15 @@
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
-    <ion-title>JEMS</ion-title>
+    <ion-title>JEMS <span class="header-beta">BETA</span></ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
+
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
 
   <!-- ── Biometric Card ──────────────────────────── -->
   <div class="bio-card" *ngIf="!bioLoading && biometric">
@@ -127,6 +131,53 @@
         <p class="bday-name">{{ j.firstName }}</p>
       </div>
     </div>
+  </div>
+
+  <!-- ── Helpdesk / My Tickets ──────────────────────── -->
+  <div class="hd-card" *ngIf="!hdLoading" (click)="goToTickets()">
+    <div class="hd-top">
+      <div class="hd-icon-wrap">
+        <ion-icon name="ticket-outline"></ion-icon>
+      </div>
+      <div class="hd-title-block">
+        <h3 class="hd-title">My Helpdesk Tickets</h3>
+        <p class="hd-sub">Track your support requests</p>
+      </div>
+      <ion-icon name="chevron-forward-outline" class="hd-arrow"></ion-icon>
+    </div>
+
+    <div class="hd-stats" *ngIf="hdTickets.length > 0">
+      <div class="hd-stat" *ngIf="openCount > 0">
+        <span class="hd-stat-val open-val">{{ openCount }}</span>
+        <span class="hd-stat-lbl">Open</span>
+      </div>
+      <div class="hd-stat" *ngIf="progressCount > 0">
+        <span class="hd-stat-val progress-val">{{ progressCount }}</span>
+        <span class="hd-stat-lbl">In Progress</span>
+      </div>
+      <div class="hd-stat" *ngIf="reopenCount > 0">
+        <span class="hd-stat-val reopen-val">{{ reopenCount }}</span>
+        <span class="hd-stat-lbl">Reopen</span>
+      </div>
+      <div class="hd-stat">
+        <span class="hd-stat-val total-val">{{ hdTickets.length }}</span>
+        <span class="hd-stat-lbl">Total</span>
+      </div>
+    </div>
+
+    <div class="hd-latest" *ngIf="hdTickets.length > 0">
+      <div class="hd-latest-row" *ngFor="let t of hdTickets.slice(0, 2)">
+        <span class="hd-pill" [ngClass]="hdStatusClass(t.status)">{{ t.status }}</span>
+        <span class="hd-subject">{{ t.subject }}</span>
+      </div>
+    </div>
+
+    <p class="hd-empty" *ngIf="hdTickets.length === 0">No tickets raised yet</p>
+  </div>
+
+  <div class="hd-skeleton" *ngIf="hdLoading">
+    <ion-skeleton-text animated style="width:55%;height:14px;border-radius:6px;margin-bottom:8px"></ion-skeleton-text>
+    <ion-skeleton-text animated style="width:100%;height:60px;border-radius:12px"></ion-skeleton-text>
   </div>
 
 </ion-content>

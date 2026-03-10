@@ -64,7 +64,7 @@ export class TimetablePage implements OnInit {
       });
   }
 
-  loadTimetable(weekNumber: number) {
+  loadTimetable(weekNumber: number, event?: any) {
     this.loading = true;
     this.http.get<TimetableSlot[]>(
       `${environment.apiUrl}FacultyWorkload/gettimetable/${this.userId}/${this.sessionId}`,
@@ -73,9 +73,18 @@ export class TimetablePage implements OnInit {
       next: slots => {
         this.dayGroups = this.groupByDay(slots || [], this.selectedWeek!);
         this.loading = false;
+        event?.target?.complete();
       },
-      error: () => { this.loading = false; this.error = true; }
+      error: () => { this.loading = false; this.error = true; event?.target?.complete(); }
     });
+  }
+
+  handleRefresh(event: any) {
+    if (this.selectedWeek) {
+      this.loadTimetable(this.selectedWeek.weekNumber, event);
+    } else {
+      event.target.complete();
+    }
   }
 
   private groupByDay(slots: TimetableSlot[], week: SessionWeek): DayGroup[] {

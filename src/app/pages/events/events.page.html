@@ -7,6 +7,10 @@
 
 <ion-content class="ion-padding">
 
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <!-- ── Filter Bar ───────────────────────────────── -->
   <div class="filter-bar">
 

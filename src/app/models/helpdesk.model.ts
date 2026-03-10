@@ -16,6 +16,39 @@ export interface Ticket {
   attachments?: Attachment[];
 }
 
+export interface TicketUser {
+  userId: number;
+  employeeCode: string;
+  name: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  email: string;
+  salutation: string;
+  profilePicture: string;
+}
+
+export interface MyTicket {
+  ticketId: number;
+  ticketNumber: string;
+  subject: string;
+  status: string;
+  priority: string;
+  requestType: string;
+  issueReported: string;
+  requestedBy: TicketUser;
+  assignedTo: TicketUser | null;
+  conversationCount: number;
+  hasUnreadMessages: boolean;
+}
+
+export interface MyTicketsResponse {
+  success: boolean;
+  message: string;
+  data: MyTicket[];
+  errors: any[];
+}
+
 export interface Conversation {
   conversationId: number;
   ticketId: number;
@@ -24,6 +57,39 @@ export interface Conversation {
   senderName: string;
   createdAt: string;
   attachments?: Attachment[];
+}
+
+export interface TicketConversation {
+  conversationId: number;
+  message: string;
+  isInternal: boolean;
+  createdAt: string;
+  user: TicketUser;
+  attachments: any[];
+}
+
+export interface TicketDetail {
+  ticketId: number;
+  ticketNumber: string;
+  subject: string;
+  detail: string;
+  status: string;
+  priority: string;
+  requestType: string;
+  department: string;
+  location: string;
+  issueReported: string;
+  requestedBy: TicketUser;
+  assignedTo: TicketUser | null;
+  conversations: TicketConversation[];
+  attachments: any[];
+}
+
+export interface TicketDetailResponse {
+  success: boolean;
+  message: string;
+  data: TicketDetail;
+  errors: any[];
 }
 
 export interface Attachment {

@@ -50,13 +50,32 @@ $cream:   #fffcdb;
   border-radius: 8px;
 }
 
+.app-name-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
 .app-name {
   color: #ffffff;
   font-size: 24px;
   font-weight: 800;
   letter-spacing: 3px;
   text-transform: uppercase;
-  margin: 0 0 4px;
+  margin: 0;
+}
+
+.beta-badge {
+  font-size: 9px;
+  font-weight: 800;
+  color: #fff;
+  background: $accent;
+  padding: 2px 7px;
+  border-radius: 6px;
+  letter-spacing: 0.8px;
+  align-self: flex-start;
+  margin-top: 4px;
 }
 
 .app-tagline {

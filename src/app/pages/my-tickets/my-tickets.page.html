@@ -1,0 +1,241 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
+    <ion-title>My Tickets</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="load()">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="tickets-content">
+
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <!-- ── Status Filter Chips ──────────────────────────────────────────────── -->
+  <div class="filter-scroll-wrap">
+    <div class="filter-chips">
+      <button class="filter-chip"
+        *ngFor="let f of filters"
+        [class.chip-active]="activeFilter === f"
+        (click)="activeFilter = f">
+        {{ f }}
+        <span class="chip-count" *ngIf="countFor(f) > 0">{{ countFor(f) }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Loading ────────────────────────────────────────────────────────── -->
+  <div *ngIf="loading" class="skel-wrap">
+    <div class="ticket-skel" *ngFor="let i of [1,2,3,4]">
+      <ion-skeleton-text animated style="width:35%;height:10px;border-radius:4px;margin-bottom:8px"></ion-skeleton-text>
+      <ion-skeleton-text animated style="width:75%;height:14px;border-radius:4px;margin-bottom:6px"></ion-skeleton-text>
+      <ion-skeleton-text animated style="width:50%;height:10px;border-radius:4px"></ion-skeleton-text>
+    </div>
+  </div>
+
+  <!-- ── Ticket List ─────────────────────────────────────────────────────── -->
+  <div *ngIf="!loading" class="ticket-list">
+
+    <div class="ticket-card" *ngFor="let t of filtered" (click)="openDetail(t)">
+
+      <!-- Top row: ticket number + status -->
+      <div class="tc-top">
+        <span class="tc-number">{{ t.ticketNumber }}</span>
+        <span class="tc-status" [ngClass]="statusClass(t.status)">{{ t.status }}</span>
+      </div>
+
+      <!-- Subject -->
+      <p class="tc-subject">{{ t.subject }}</p>
+
+      <!-- Meta row -->
+      <div class="tc-meta">
+        <span class="tc-type">
+          <ion-icon name="construct-outline"></ion-icon>
+          {{ t.requestType }}
+        </span>
+        <span class="tc-priority" [ngClass]="priorityClass(t.priority)">
+          <ion-icon name="flag-outline"></ion-icon>
+          {{ t.priority }}
+        </span>
+      </div>
+
+      <!-- Bottom row: date + conversations -->
+      <div class="tc-footer">
+        <span class="tc-date">
+          <ion-icon name="time-outline"></ion-icon>
+          {{ timeAgo(t.issueReported) }}
+        </span>
+        <span class="tc-convo" *ngIf="t.conversationCount > 0"
+          (click)="openDetail(t); $event.stopPropagation()">
+          <ion-icon name="chatbubble-outline"></ion-icon>
+          {{ t.conversationCount }}
+          <span class="unread-dot" *ngIf="t.hasUnreadMessages"></span>
+        </span>
+      </div>
+
+    </div>
+
+    <!-- Empty state -->
+    <div class="empty-state" *ngIf="filtered.length === 0">
+      <ion-icon name="ticket-outline"></ion-icon>
+      <p>No {{ activeFilter === 'ALL' ? '' : activeFilter.toLowerCase() + ' ' }}tickets found</p>
+    </div>
+
+  </div>
+
+</ion-content>
+
+<!-- ── Ticket Detail Sheet ──────────────────────────────────────────────────── -->
+<div class="detail-overlay" *ngIf="selectedTicket" (click)="closeDetail()">
+  <div class="detail-sheet" (click)="$event.stopPropagation()">
+
+    <div class="sheet-handle"></div>
+    <button class="sheet-close" (click)="closeDetail()">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+
+    <!-- Header -->
+    <div class="ds-header">
+      <div class="ds-header-top">
+        <span class="ds-number">{{ selectedTicket.ticketNumber }}</span>
+        <span class="ds-status" [ngClass]="statusClass(selectedTicket.status)">{{ selectedTicket.status }}</span>
+      </div>
+      <h2 class="ds-subject">{{ selectedTicket.subject }}</h2>
+      <div class="ds-meta-chips">
+        <span class="ds-chip type-chip">
+          <ion-icon name="construct-outline"></ion-icon>{{ selectedTicket.requestType }}
+        </span>
+        <span class="ds-chip" [ngClass]="priorityClass(selectedTicket.priority)">
+          <ion-icon name="flag-outline"></ion-icon>{{ selectedTicket.priority }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Scrollable body -->
+    <div class="ds-body">
+
+      <!-- ── Loading skeleton for full detail ─────────────── -->
+      <div *ngIf="convoLoading" class="tl-loading">
+        <div class="ds-info-grid" style="margin-bottom:18px">
+          <ion-skeleton-text animated style="height:40px;border-radius:10px"></ion-skeleton-text>
+          <ion-skeleton-text animated style="height:40px;border-radius:10px"></ion-skeleton-text>
+          <ion-skeleton-text animated style="height:40px;border-radius:10px"></ion-skeleton-text>
+          <ion-skeleton-text animated style="height:40px;border-radius:10px"></ion-skeleton-text>
+        </div>
+        <div class="tl-item" *ngFor="let i of [1,2,3]">
+          <div class="tl-left">
+            <div class="tl-dot dot-skel"></div>
+            <div class="tl-line"></div>
+          </div>
+          <div class="tl-content">
+            <ion-skeleton-text animated style="width:80%;height:36px;border-radius:10px;margin:0"></ion-skeleton-text>
+            <ion-skeleton-text animated style="width:40%;height:10px;border-radius:4px;margin-top:4px"></ion-skeleton-text>
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="!convoLoading">
+
+        <!-- Error state -->
+        <div class="tl-empty" *ngIf="convoError">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <p>Could not load ticket details</p>
+        </div>
+
+        <ng-container *ngIf="ticketDetail">
+
+          <!-- ── Info Rows ─────────────────────────────────────── -->
+          <div class="ds-info-grid">
+            <div class="ds-info-cell">
+              <span class="ds-info-label">Reported On</span>
+              <span class="ds-info-val">{{ formatDate(ticketDetail.issueReported) }}</span>
+            </div>
+            <div class="ds-info-cell" *ngIf="ticketDetail.requestedBy">
+              <span class="ds-info-label">Requested By</span>
+              <span class="ds-info-val">{{ ticketDetail.requestedBy.salutation }} {{ ticketDetail.requestedBy.name }}</span>
+            </div>
+            <div class="ds-info-cell" *ngIf="ticketDetail.assignedTo">
+              <span class="ds-info-label">Assigned To</span>
+              <span class="ds-info-val">{{ ticketDetail.assignedTo.salutation }} {{ ticketDetail.assignedTo.name }}</span>
+            </div>
+            <div class="ds-info-cell" *ngIf="ticketDetail.department">
+              <span class="ds-info-label">Department</span>
+              <span class="ds-info-val">{{ ticketDetail.department }}</span>
+            </div>
+            <div class="ds-info-cell ds-info-full" *ngIf="ticketDetail.location">
+              <span class="ds-info-label">Location</span>
+              <span class="ds-info-val">{{ ticketDetail.location }}</span>
+            </div>
+            <div class="ds-info-cell ds-info-full" *ngIf="ticketDetail.detail">
+              <span class="ds-info-label">Description</span>
+              <span class="ds-info-val ds-info-desc">{{ ticketDetail.detail }}</span>
+            </div>
+          </div>
+
+          <!-- ── Conversation Timeline ──────────────────────────── -->
+          <div class="tl-section">
+            <div class="tl-section-title">
+              <ion-icon name="chatbubbles-outline"></ion-icon>
+              Conversation Timeline
+              <span class="tl-count" *ngIf="conversations.length > 0">{{ conversations.length }}</span>
+            </div>
+
+            <!-- Ticket Created node -->
+            <div class="tl-item">
+              <div class="tl-left">
+                <div class="tl-dot dot-created">
+                  <ion-icon name="ticket-outline"></ion-icon>
+                </div>
+                <div class="tl-line" *ngIf="conversations.length > 0"></div>
+              </div>
+              <div class="tl-content">
+                <div class="tl-bubble bubble-created">
+                  <p class="tl-bubble-text">Ticket raised: <strong>{{ ticketDetail.subject }}</strong></p>
+                </div>
+                <span class="tl-time">{{ formatDateTime(ticketDetail.issueReported) }}</span>
+              </div>
+            </div>
+
+            <!-- Conversation items -->
+            <div class="tl-item" *ngFor="let c of conversations; let last = last"
+              [class.tl-self]="isSelf(c)">
+              <div class="tl-left">
+                <div class="tl-dot" [class.dot-self]="isSelf(c)" [class.dot-other]="!isSelf(c)">
+                  {{ senderInitials(c.user?.name || '') }}
+                </div>
+                <div class="tl-line" *ngIf="!last"></div>
+              </div>
+              <div class="tl-content">
+                <span class="tl-sender" [class.sender-self]="isSelf(c)">
+                  {{ c.user?.salutation }} {{ c.user?.name }}
+                </span>
+                <div class="tl-bubble" [class.bubble-self]="isSelf(c)" [class.bubble-other]="!isSelf(c)"
+                  [class.bubble-internal]="c.isInternal">
+                  <span class="internal-tag" *ngIf="c.isInternal">Internal</span>
+                  <p class="tl-bubble-text">{{ c.message }}</p>
+                </div>
+                <span class="tl-time">{{ formatDateTime(c.createdAt) }}</span>
+              </div>
+            </div>
+
+            <!-- No conversations -->
+            <div class="tl-empty" *ngIf="conversations.length === 0">
+              <ion-icon name="chatbubble-outline"></ion-icon>
+              <p>No messages yet</p>
+            </div>
+
+          </div>
+
+        </ng-container>
+
+      </ng-container>
+
+    </div>
+
+  </div>
+</div>

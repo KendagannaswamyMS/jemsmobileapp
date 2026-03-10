@@ -34,6 +34,10 @@
 
 <ion-content class="ion-padding">
 
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <!-- Loading -->
   <div *ngIf="loading" class="skeleton-wrap">
     <ion-skeleton-text animated *ngFor="let i of [1,2,3]"

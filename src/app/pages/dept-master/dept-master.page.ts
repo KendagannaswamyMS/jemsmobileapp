@@ -30,16 +30,18 @@ export class DeptMasterPage implements OnInit {
     this.load();
   }
 
-  private load() {
+  private load(event?: any) {
     this.loading = true;
     this.http.post<DeptStaff[]>(
       `${environment.apiUrl}DashboardDep/GetUserMasterForDept`,
       { departmentId: [-1], designationId: -1, EmptypeID: -1, StaffTypeId: -1 }
     ).subscribe({
-      next: res => { this.allStaff = res || []; this.loading = false; },
-      error: () => { this.loading = false; }
+      next: res => { this.allStaff = res || []; this.loading = false; event?.target?.complete(); },
+      error: () => { this.loading = false; event?.target?.complete(); }
     });
   }
+
+  handleRefresh(event: any) { this.load(event); }
 
   get departments(): string[] {
     const seen = new Set<string>();

@@ -34,16 +34,18 @@ export class EventsPage implements OnInit {
 
   constructor(private http: HttpClient) {}
 
-  ngOnInit() {
+  ngOnInit() { this.load(); }
+
+  load(event?: any) {
+    this.loading = true;
     this.http.get<EventsResponse>(`${environment.apiUrl}newsandevent/getevent`)
       .subscribe({
-        next: res => {
-          this.allEvents = res?.eventMaster || [];
-          this.loading = false;
-        },
-        error: () => { this.loading = false; }
+        next: res => { this.allEvents = res?.eventMaster || []; this.loading = false; event?.target?.complete(); },
+        error: () => { this.loading = false; event?.target?.complete(); }
       });
   }
+
+  handleRefresh(event: any) { this.load(event); }
 
   // Unique month-year options from data
   get monthOptions(): string[] {

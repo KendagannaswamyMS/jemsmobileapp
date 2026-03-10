@@ -55,6 +55,12 @@
           <ion-label>HRMS</ion-label>
         </ion-item>
 
+        <ion-item button (click)="navigate('/tabs/helpdesk')" class="menu-item"
+          routerLink="/tabs/helpdesk" routerLinkActive="active-item">
+          <ion-icon name="ticket-outline" slot="start"></ion-icon>
+          <ion-label>My Tickets</ion-label>
+        </ion-item>
+
       </ion-list>
     </ion-content>
 

@@ -1,11 +1,13 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { filter, take } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
 import { CurrentUser } from '../../models/user.model';
 import { BirthdayUser } from '../../models/birthday.model';
 import { BiometricRecord, DayLog } from '../../models/biometric.model';
 import { LatestJoiner } from '../../models/joiner.model';
+import { MyTicket, MyTicketsResponse } from '../../models/helpdesk.model';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -35,7 +37,15 @@ export class HomePage implements OnInit, OnDestroy {
   selectedUser: BirthdayUser | null = null;
   selectedImgError = false;
 
-  constructor(private authService: AuthService, private http: HttpClient) {}
+  // Helpdesk
+  hdTickets: MyTicket[] = [];
+  hdLoading = true;
+
+  constructor(
+    private authService: AuthService,
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.authService.user$.subscribe(u => (this.user = u));
@@ -46,6 +56,7 @@ export class HomePage implements OnInit, OnDestroy {
       take(1)
     ).subscribe(u => {
       this.loadBiometric(u!.userId);
+      this.loadTickets(u!.userId);
     });
 
     this.loadBirthdays();
@@ -176,4 +187,44 @@ export class HomePage implements OnInit, OnDestroy {
 
   openJoinerPopup(j: LatestJoiner) { this.selectedJoiner = j; this.joinerImgError = false; }
   closeJoinerPopup() { this.selectedJoiner = null; }
+
+  // ── Helpdesk ───────────────────────────────────────────────────────────────
+
+  private loadTickets(userId: number) {
+    this.hdLoading = true;
+    this.http.post<MyTicketsResponse>(
+      `${environment.apiUrl}HelpDesk/mytickets`,
+      { userId }
+    ).subscribe({
+      next:  res  => { this.hdTickets = res?.data || []; this.hdLoading = false; },
+      error: ()   => { this.hdLoading = false; }
+    });
+  }
+
+  get openCount():     number { return this.hdTickets.filter(t => t.status === 'OPEN').length; }
+  get progressCount(): number { return this.hdTickets.filter(t => t.status === 'IN PROGRESS').length; }
+  get reopenCount():   number { return this.hdTickets.filter(t => t.status === 'REOPEN').length; }
+
+  hdStatusClass(status: string): string {
+    switch (status) {
+      case 'OPEN':        return 'hd-open';
+      case 'IN PROGRESS': return 'hd-progress';
+      case 'REOPEN':      return 'hd-reopen';
+      case 'RESOLVED':    return 'hd-resolved';
+      case 'CLOSED':      return 'hd-closed';
+      default:            return 'hd-open';
+    }
+  }
+
+  goToTickets() {
+    this.router.navigateByUrl('/tabs/helpdesk');
+  }
+
+  handleRefresh(event: any) {
+    const uid = this.user?.userId;
+    if (uid) { this.loadBiometric(uid); this.loadTickets(uid); }
+    this.loadLatestJoiners();
+    this.loadBirthdays();
+    setTimeout(() => event.target.complete(), 3000);
+  }
 }

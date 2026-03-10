@@ -1,7 +1,6 @@
 $primary: #125875;
-$accent:  #F26622;
 
-.hrms-content {
+.helpdesk-content {
   --background: #f0f4f7;
 }
 
@@ -45,7 +44,6 @@ $accent:  #F26622;
 
   ion-icon { font-size: 24px; color: #fff; }
 
-  &.bio     { background: linear-gradient(135deg, $primary, #1e7fa0); }
   &.tickets { background: linear-gradient(135deg, #7c3aed, #9f67f5); }
 }
 

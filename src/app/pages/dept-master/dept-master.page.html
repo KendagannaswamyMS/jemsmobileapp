@@ -12,6 +12,10 @@
 
 <ion-content class="ion-padding">
 
+  <ion-refresher slot="fixed" (ionRefresh)="handleRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
   <!-- ── Department filter ─────────────────────────── -->
   <div class="dept-select-wrap">
     <ion-icon name="business-outline" class="dept-icon"></ion-icon>

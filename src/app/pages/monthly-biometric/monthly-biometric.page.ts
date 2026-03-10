@@ -60,7 +60,7 @@ export class MonthlyBiometricPage implements OnInit {
     });
   }
 
-  load() {
+  load(event?: any) {
     this.loading = true;
     this.record  = null;
     this.http.post<MonthlyAttendanceRecord[]>(
@@ -72,10 +72,12 @@ export class MonthlyBiometricPage implements OnInit {
         year:         this.selectedYear
       }
     ).subscribe({
-      next:  res   => { this.record = res?.[0] ?? null; this.loading = false; },
-      error: ()    => { this.loading = false; }
+      next:  res   => { this.record = res?.[0] ?? null; this.loading = false; event?.target?.complete(); },
+      error: ()    => { this.loading = false; event?.target?.complete(); }
     });
   }
+
+  handleRefresh(event: any) { this.load(event); }
 
   back() {
     this.router.navigateByUrl('/tabs/hrms');
