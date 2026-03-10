@@ -77,6 +77,7 @@ export class LoginPage {
       },
       error: async (err) => {
         this.isLoading = false;
+        console.error('[Login Error] status:', err?.status, 'name:', err?.name, 'message:', err?.message, 'error:', err?.error);
         const isTimeout = err?.name === 'TimeoutError';
         const msg = isTimeout
           ? 'Server is not responding. Please check your connection.'
