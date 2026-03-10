@@ -335,30 +335,18 @@ ion-note.section-note {
 
 .topic-select {
   width: 100%;
-  appearance: none;
-  -webkit-appearance: none;
-  padding: 12px 40px 12px 14px;
+  --padding-start: 14px;
+  --padding-end: 14px;
+  --placeholder-color: #8a9ea6;
+  --placeholder-opacity: 1;
+  --highlight-height: 0;
   border: 1.5px solid #d0dce2;
   border-radius: 10px;
   background: #f8fafb;
   font-size: 13px;
   color: #1a2e38;
   font-weight: 500;
-  outline: none;
-  cursor: pointer;
-
-  &:focus { border-color: $primary; background: #fff; }
-  &:disabled { cursor: not-allowed; }
-}
-
-.select-arrow {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 16px;
-  color: #8a9ea6;
-  pointer-events: none;
+  min-height: 46px;
 }
 
 .topic-note {

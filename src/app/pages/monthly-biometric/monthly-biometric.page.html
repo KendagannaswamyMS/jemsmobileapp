@@ -1,0 +1,205 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="back()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Monthly Biometric</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="mb-content">
+
+  <!-- ── Filter Bar ──────────────────────────────────────────────────────── -->
+  <div class="filter-bar">
+
+    <div class="filter-item">
+      <p class="filter-label">Select Month</p>
+      <div class="select-wrap">
+        <ion-select class="bio-select" [(ngModel)]="selectedMonth"
+          interface="action-sheet" (ionChange)="load()">
+          <ion-select-option *ngFor="let m of months" [value]="m.value">{{ m.label }}</ion-select-option>
+        </ion-select>
+        <ion-icon name="calendar-outline" class="select-suffix"></ion-icon>
+      </div>
+    </div>
+
+    <div class="filter-item">
+      <p class="filter-label">Select Year</p>
+      <div class="select-wrap">
+        <ion-select class="bio-select" [(ngModel)]="selectedYear"
+          interface="action-sheet" (ionChange)="load()">
+          <ion-select-option *ngFor="let y of years" [value]="y">{{ y }}</ion-select-option>
+        </ion-select>
+        <ion-icon name="calendar-outline" class="select-suffix"></ion-icon>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Loading ────────────────────────────────────────────────────────── -->
+  <div *ngIf="loading" class="skel-wrap">
+    <ion-skeleton-text animated class="skel-heading"></ion-skeleton-text>
+    <div class="stats-grid">
+      <ion-skeleton-text animated *ngFor="let i of [1,2,3,4]" class="skel-card"></ion-skeleton-text>
+    </div>
+    <ion-skeleton-text animated class="skel-heading" style="width:55%"></ion-skeleton-text>
+    <ion-skeleton-text animated *ngFor="let i of [1,2,3,4,5]" class="skel-row"></ion-skeleton-text>
+  </div>
+
+  <ng-container *ngIf="!loading && record">
+
+    <!-- ── Report Heading ──────────────────────────────────────────────── -->
+    <div class="report-heading">
+      <div class="rh-left">
+        <ion-icon name="calendar-outline" class="rh-icon"></ion-icon>
+        <div>
+          <h2 class="rh-title">{{ monthLabel }} {{ selectedYear }} Attendance Report</h2>
+          <p class="rh-sub">Detailed attendance summary for {{ monthLabel }} {{ selectedYear }}</p>
+        </div>
+      </div>
+      <span class="current-badge" *ngIf="record.averageDetails.isCurrentMonth">Live</span>
+    </div>
+
+    <!-- ── Stats Cards ─────────────────────────────────────────────────── -->
+    <div class="stats-grid">
+
+      <!-- Attendance Rate -->
+      <div class="stat-card">
+        <div class="stat-top">
+          <span class="stat-value" [style.color]="pctColor">{{ record.averageDetails.attendancePercentage }}%</span>
+          <ion-icon name="trending-up-outline" class="stat-icon" [style.color]="pctColor"></ion-icon>
+        </div>
+        <p class="stat-label">Attendance Rate</p>
+        <div class="stat-bar">
+          <div class="stat-bar-fill" [style.width.%]="record.averageDetails.attendancePercentage"
+            [style.background]="pctColor"></div>
+        </div>
+      </div>
+
+      <!-- Present Days -->
+      <div class="stat-card">
+        <div class="stat-top">
+          <span class="stat-value present-val">{{ record.averageDetails.presentDays }}</span>
+          <ion-icon name="checkmark-circle" class="stat-icon present-icon"></ion-icon>
+        </div>
+        <p class="stat-label">Present Days</p>
+        <p class="stat-sub">out of {{ record.averageDetails.totalWorkingDays }}</p>
+      </div>
+
+      <!-- Absent Days -->
+      <div class="stat-card">
+        <div class="stat-top">
+          <span class="stat-value absent-val">{{ record.averageDetails.absentDays }}</span>
+          <ion-icon name="close-circle" class="stat-icon absent-icon"></ion-icon>
+        </div>
+        <p class="stat-label">Absent Days</p>
+        <p class="stat-sub">{{ record.averageDetails.absentDays === 0 ? '0.0' : ((record.averageDetails.absentDays / record.averageDetails.totalWorkingDays) * 100 | number:'1.1-1') }}% of total</p>
+      </div>
+
+      <!-- Avg Working Hours -->
+      <div class="stat-card">
+        <div class="stat-top">
+          <span class="stat-value hours-val">{{ record.averageDetails.averageWorkingHours }}</span>
+          <ion-icon name="time-outline" class="stat-icon hours-icon"></ion-icon>
+        </div>
+        <p class="stat-label">Avg. Working Hours</p>
+        <p class="stat-sub">Daily average</p>
+      </div>
+
+    </div>
+
+    <!-- ── Extra Stats Strip ───────────────────────────────────────────── -->
+    <div class="extra-strip">
+      <div class="extra-item">
+        <span class="extra-val">{{ record.averageDetails.averageLoginTime }}</span>
+        <span class="extra-lbl">Avg Login</span>
+      </div>
+      <div class="extra-divider"></div>
+      <div class="extra-item">
+        <span class="extra-val">{{ record.averageDetails.totalActualHours }}</span>
+        <span class="extra-lbl">Total Hours</span>
+      </div>
+      <div class="extra-divider"></div>
+      <div class="extra-item">
+        <span class="extra-val">{{ record.averageDetails.attendanceEfficiency | number:'1.1-1' }}%</span>
+        <span class="extra-lbl">Efficiency</span>
+      </div>
+      <div class="extra-divider"></div>
+      <div class="extra-item">
+        <span class="extra-val">{{ record.averageDetails.lateDays }}</span>
+        <span class="extra-lbl">Late Days</span>
+      </div>
+    </div>
+
+    <!-- ── Detailed Records ────────────────────────────────────────────── -->
+    <div class="section-header">
+      <h3 class="section-title">Detailed Attendance Records</h3>
+      <p class="section-sub">{{ monthLabel }} punch in/out records</p>
+    </div>
+
+    <!-- Column Headers -->
+    <div class="rec-header-row">
+      <span class="rh-date">Date</span>
+      <span class="rh-login">Login</span>
+      <span class="rh-logout">Logout</span>
+      <span class="rh-hours">Hours</span>
+      <span class="rh-status">Status</span>
+    </div>
+
+    <!-- Record Rows -->
+    <div class="rec-list">
+      <div class="rec-row" *ngFor="let row of record.attendanceDetails"
+        [class.rec-weekend]="row.isSunday || row.isSaturday"
+        [class.rec-holiday]="row.isHoliday">
+
+        <div class="rr-date-col">
+          <span class="rr-day-num">{{ formatDate(row.date) }}</span>
+          <span class="rr-day-name">{{ row.dayOfWeek }}</span>
+        </div>
+
+        <div class="rr-time-col">
+          <ion-icon name="log-in-outline" class="rr-time-icon in-icon"></ion-icon>
+          <span class="rr-time" [class.time-na]="row.firstLoginTime === 'N/A'">{{ row.firstLoginTime }}</span>
+        </div>
+
+        <div class="rr-time-col">
+          <ion-icon name="log-out-outline" class="rr-time-icon out-icon"></ion-icon>
+          <span class="rr-time" [class.time-na]="row.lastLogoutTime === 'N/A'">{{ row.lastLogoutTime }}</span>
+        </div>
+
+        <div class="rr-hours-col">
+          <span class="hours-badge" [ngClass]="hoursClass(row)">{{ row.totalHours }}</span>
+        </div>
+
+        <div class="rr-status-col">
+          <span class="status-pill" [ngClass]="statusClass(row)">
+            <ion-icon *ngIf="row.status === 'Present' && !row.isLate" name="checkmark-circle"></ion-icon>
+            <ion-icon *ngIf="row.status === 'Present' && row.isLate"  name="time"></ion-icon>
+            <ion-icon *ngIf="row.status === 'Absent'"                 name="close-circle"></ion-icon>
+            <span *ngIf="row.isSunday || row.isSaturday || row.isHoliday || row.isOnLeave">—</span>
+            {{ row.status }}
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Data note -->
+    <p class="data-note" *ngIf="record.averageDetails.isCurrentMonth">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      Data up to {{ record.averageDetails.dataUpToDate | date:'dd MMM yyyy' }}
+      <span *ngIf="record.averageDetails.todayExcluded"> · Today excluded</span>
+    </p>
+
+  </ng-container>
+
+  <!-- ── Empty / Error ──────────────────────────────────────────────────── -->
+  <div *ngIf="!loading && !record" class="empty-state">
+    <ion-icon name="calendar-outline"></ion-icon>
+    <p>No attendance data found</p>
+    <p class="empty-sub">for {{ monthLabel }} {{ selectedYear }}</p>
+  </div>
+
+</ion-content>

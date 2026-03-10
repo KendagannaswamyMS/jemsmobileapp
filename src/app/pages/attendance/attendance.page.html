@@ -131,37 +131,37 @@
 
     <!-- Unit -->
     <div class="topic-select-wrap">
-      <select class="topic-select"
-        [value]="selectedUnit?.nodeId || ''"
-        (change)="onUnitChange(+$any($event.target).value)">
-        <option value="" disabled>Unit</option>
-        <option *ngFor="let u of units" [value]="u.nodeId">{{ u.nodeTitle }}</option>
-      </select>
-      <ion-icon name="chevron-down-outline" class="select-arrow"></ion-icon>
+      <ion-select class="topic-select"
+        [value]="selectedUnit?.nodeId || null"
+        interface="action-sheet"
+        placeholder="Unit"
+        (ionChange)="onUnitChange($any($event).detail.value)">
+        <ion-select-option *ngFor="let u of units" [value]="u.nodeId">{{ u.nodeTitle }}</ion-select-option>
+      </ion-select>
     </div>
 
     <!-- Chapter -->
     <div class="topic-select-wrap" [class.sel-disabled]="!selectedUnit">
-      <select class="topic-select"
-        [value]="selectedChapter?.nodeId || ''"
+      <ion-select class="topic-select"
+        [value]="selectedChapter?.nodeId || null"
         [disabled]="!selectedUnit"
-        (change)="onChapterChange(+$any($event.target).value)">
-        <option value="" disabled>Chapter</option>
-        <option *ngFor="let c of chapters" [value]="c.nodeId">{{ c.nodeTitle }}</option>
-      </select>
-      <ion-icon name="chevron-down-outline" class="select-arrow"></ion-icon>
+        interface="action-sheet"
+        placeholder="Chapter"
+        (ionChange)="onChapterChange($any($event).detail.value)">
+        <ion-select-option *ngFor="let c of chapters" [value]="c.nodeId">{{ c.nodeTitle }}</ion-select-option>
+      </ion-select>
     </div>
 
     <!-- Topic -->
     <div class="topic-select-wrap" [class.sel-disabled]="!selectedChapter">
-      <select class="topic-select"
-        [value]="selectedTopic?.nodeId || ''"
+      <ion-select class="topic-select"
+        [value]="selectedTopic?.nodeId || null"
         [disabled]="!selectedChapter"
-        (change)="onTopicChange(+$any($event.target).value)">
-        <option value="" disabled>Topic</option>
-        <option *ngFor="let t of topics" [value]="t.nodeId">{{ t.nodeTitle }}</option>
-      </select>
-      <ion-icon name="chevron-down-outline" class="select-arrow"></ion-icon>
+        interface="action-sheet"
+        placeholder="Topic"
+        (ionChange)="onTopicChange($any($event).detail.value)">
+        <ion-select-option *ngFor="let t of topics" [value]="t.nodeId">{{ t.nodeTitle }}</ion-select-option>
+      </ion-select>
     </div>
 
     <!-- Note -->

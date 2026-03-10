@@ -15,11 +15,11 @@
   <!-- ── Department filter ─────────────────────────── -->
   <div class="dept-select-wrap">
     <ion-icon name="business-outline" class="dept-icon"></ion-icon>
-    <select class="dept-select" [(ngModel)]="selectedDept">
-      <option value="">All Departments</option>
-      <option *ngFor="let d of departments" [value]="d">{{ d }}</option>
-    </select>
-    <ion-icon name="chevron-down-outline" class="select-caret"></ion-icon>
+    <ion-select class="dept-select" [(ngModel)]="selectedDept"
+      interface="action-sheet" placeholder="All Departments">
+      <ion-select-option value="">All Departments</ion-select-option>
+      <ion-select-option *ngFor="let d of departments" [value]="d">{{ d }}</ion-select-option>
+    </ion-select>
   </div>
 
   <!-- Count pill -->

@@ -52,15 +52,15 @@ $accent:  #F26622;
 
 .dept-select {
   flex: 1;
-  border: none;
-  outline: none;
-  background: transparent;
+  --padding-start: 0;
+  --padding-end: 4px;
+  --placeholder-color: #8a9ea6;
+  --placeholder-opacity: 1;
   font-size: 13px;
   font-weight: 600;
   color: $primary;
-  appearance: none;
-  -webkit-appearance: none;
-  cursor: pointer;
+  min-height: unset;
+  --highlight-height: 0;
 }
 
 .result-count {

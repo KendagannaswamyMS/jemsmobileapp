@@ -48,21 +48,19 @@ $accent:  #F26622;
   height: 36px;
 
   .month-icon  { font-size: 14px; color: $accent; flex-shrink: 0; }
-  .select-caret { font-size: 12px; color: #8a9ea6; flex-shrink: 0; }
 }
 
 .month-select {
   flex: 1;
-  border: none;
-  outline: none;
-  background: transparent;
+  --padding-start: 4px;
+  --padding-end: 0;
+  --placeholder-color: #8a9ea6;
+  --placeholder-opacity: 1;
+  --highlight-height: 0;
   font-size: 13px;
   font-weight: 600;
   color: $primary;
-  padding: 0 4px;
-  appearance: none;
-  -webkit-appearance: none;
-  cursor: pointer;
+  min-height: unset;
 }
 
 // ── Event List ────────────────────────────────────────────────────────────────

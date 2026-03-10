@@ -28,6 +28,14 @@ const routes: Routes = [
         loadChildren: () => import('../pages/dept-master/dept-master.module').then(m => m.DeptMasterPageModule)
       },
       {
+        path: 'hrms',
+        loadChildren: () => import('../pages/hrms/hrms.module').then(m => m.HrmsPageModule)
+      },
+      {
+        path: 'monthly-biometric',
+        loadChildren: () => import('../pages/monthly-biometric/monthly-biometric.module').then(m => m.MonthlyBiometricPageModule)
+      },
+      {
         path: '',
         redirectTo: 'home',
         pathMatch: 'full'

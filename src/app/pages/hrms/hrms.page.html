@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start"><ion-menu-button></ion-menu-button></ion-buttons>
+    <ion-title>HRMS</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding hrms-content">
+
+  <p class="section-label">Quick Access</p>
+
+  <div class="feature-grid">
+
+    <div class="feature-card" (click)="goTo('/tabs/monthly-biometric')">
+      <div class="feature-icon-wrap bio">
+        <ion-icon name="finger-print-outline"></ion-icon>
+      </div>
+      <p class="feature-title">Monthly Biometric</p>
+      <p class="feature-sub">Punch in/out records & attendance summary</p>
+      <ion-icon name="chevron-forward-outline" class="card-arrow"></ion-icon>
+    </div>
+
+  </div>
+
+</ion-content>

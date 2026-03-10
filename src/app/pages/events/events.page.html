@@ -18,11 +18,12 @@
 
     <div class="month-select-wrap">
       <ion-icon name="calendar-outline" class="month-icon"></ion-icon>
-      <select class="month-select" [(ngModel)]="selectedMonth" (change)="onFilterChange()">
-        <option value="">All Months</option>
-        <option *ngFor="let m of monthOptions" [value]="m">{{ m }}</option>
-      </select>
-      <ion-icon name="chevron-down-outline" class="select-caret"></ion-icon>
+      <ion-select class="month-select" [(ngModel)]="selectedMonth"
+        interface="action-sheet" placeholder="All Months"
+        (ionChange)="onFilterChange()">
+        <ion-select-option value="">All Months</ion-select-option>
+        <ion-select-option *ngFor="let m of monthOptions" [value]="m">{{ m }}</ion-select-option>
+      </ion-select>
     </div>
 
   </div>
